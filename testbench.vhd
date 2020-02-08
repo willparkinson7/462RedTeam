@@ -27,11 +27,11 @@ ARCHITECTURE structure OF testbench IS
             reset_l  :      IN    STD_LOGIC ;
             serial_in  :    IN  STD_LOGIC;
             serial_out :    OUT STD_LOGIC;
-            rx_data    :   OUT STD_LOGIC_VECTOR(7 DOWNTO 0) ;
-            rx_data_valid:  OUT STD_LOGIC ;
-            tx_start:       IN STD_LOGIC;
-            tx_data :       IN STD_LOGIC_VECTOR(7 DOWNTO 0) ;
-            tx_busy :       OUT STD_LOGIC);
+            d: INOUT  STD_LOGIC_VECTOR (31 DOWNTO 0);
+            a: IN STD_LOGIC_VECTOR (1 DOWNTO 0);
+            ce: IN STD_LOGIC;
+            oe: IN STD_LOGIC;
+            we: IN STD_LOGIC);
    END COMPONENT;
    
    COMPONENT clk_wiz_0
@@ -93,6 +93,11 @@ ARCHITECTURE structure OF testbench IS
    SIGNAL eprom_oe_l   : STD_LOGIC ;
    SIGNAL sram_ce_l    : STD_LOGIC ;
    SIGNAL sram_oe_l    : STD_LOGIC ;
+   
+   SIGNAL uart_ce      : STD_LOGIC ;
+   SIGNAL uart_oe      : STD_LOGIC ;
+   SIGNAL uart_we      : STD_LOGIC ;
+   
    SIGNAL sram_we_l    : STD_LOGIC ;
    SIGNAL vga_ena      : STD_LOGIC;
    SIGNAL vga_wea      : STD_LOGIC_VECTOR(0 DOWNTO 0) ;
@@ -111,15 +116,16 @@ BEGIN
             reset_l         => reset_l_sync,
             serial_in       => txd,
             serial_out      => rxd,
-            rx_data         => rx_data,
-            rx_data_valid   => rx_data_valid,
-            tx_start        => rx_data_valid,
-            tx_busy         => tx_busy,
-            tx_data         => tx_data);
+            d               => d,
+            a         => address(3 DOWNTO 2),
+            ce          => uart_ce,
+            oe          => uart_oe,
+            we          => uart_we);
             
-   --tx_data <= d (7 DOWNTO 0) WHEN (d(31 DOWNTO 2)) = "111111111111111111111111111111"; --tx_data is the bottom 8 bits of data 
-   --tx_start <= '1' WHEN (d(31 DOWNTO 2)) = "111111111111111111111111111111" AND write = '1';
-   --tx_busy  <= '1' WHEN (address(31 DOWNTO 2)) = "111111111111111111111111111111" AND read = '1' ELSE 'Z';
+  --decode for uart
+  uart_ce <= '1' WHEN (address(31 DOWNTO 4) = "11111111111111111111111110" AND (read = '1' or write = '1')); --tx_data is the bottom 8 bits of data 
+  uart_we <= '1' WHEN (address(31 DOWNTO 4)) = "11111111111111111111111110" AND write = '1' ELSE '0';
+  uart_oe  <= '1' WHEN (address(31 DOWNTO 4)) = "11111111111111111111111110" AND read = '1' ELSE '0';
    
    mydcm1:clk_wiz_0
    PORT MAP(clk_out1 => src_clk ,
