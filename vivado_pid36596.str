@@ -1,0 +1,260 @@
+/*
+
+Xilinx Vivado v2019.1 (64-bit) [Major: 2019, Minor: 1]
+SW Build: 2552052 on Fri May 24 14:49:42 MDT 2019
+IP Build: 2548770 on Fri May 24 18:01:18 MDT 2019
+
+Process ID (PID): 36596
+License: Customer
+
+Current time: 	Fri Jan 24 10:38:24 GMT-06:00 2020
+Time zone: 	GMT-06:00 (GMT-06:00)
+
+OS: Windows Server 2016
+OS Version: 10.0
+OS Architecture: amd64
+Available processors (cores): 8
+
+Screen size: 1440x900
+Screen resolution (DPI): 100
+Available screens: 1
+Available disk space: 381 GB
+Default font: family=Dialog,name=Dialog,style=plain,size=12
+
+Java version: 	9.0.4 64-bit
+Java home: 	C:/Apps/Xilinx/Vivado/2019.1/tps/win64/jre9.0.4
+Java executable location: 	C:/Apps/Xilinx/Vivado/2019.1/tps/win64/jre9.0.4/bin/java.exe
+Java initial memory (-Xms): 	128 MB
+Java maximum memory (-Xmx):	 3 GB
+
+
+User name: 	j.guan
+User home directory: C:/Users/j.guan
+User working directory: H:/cse462/LAB2_BenGuan
+User country: 	US
+User language: 	en
+User locale: 	en_US
+
+RDI_BASEROOT: C:/Apps/Xilinx/Vivado
+HDI_APPROOT: C:/Apps/Xilinx/Vivado/2019.1
+RDI_DATADIR: C:/Apps/Xilinx/Vivado/2019.1/data
+RDI_BINDIR: C:/Apps/Xilinx/Vivado/2019.1/bin
+
+Vivado preferences file location: C:/Users/j.guan/AppData/Roaming/Xilinx/Vivado/2019.1/vivado.xml
+Vivado preferences directory: C:/Users/j.guan/AppData/Roaming/Xilinx/Vivado/2019.1/
+Vivado layouts directory: C:/Users/j.guan/AppData/Roaming/Xilinx/Vivado/2019.1/layouts
+PlanAhead jar file location: 	C:/Apps/Xilinx/Vivado/2019.1/lib/classes/planAhead.jar
+Vivado log file location: 	H:/cse462/LAB2_BenGuan/vivado.log
+Vivado journal file location: 	H:/cse462/LAB2_BenGuan/vivado.jou
+Engine tmp dir: 	H:/cse462/LAB2_BenGuan/.Xil/Vivado-36596-RDSH01-FL19
+
+Xilinx Environment Variables
+----------------------------
+KINECTSDK10_DIR: C:\Program Files\Microsoft SDKs\Kinect\v1.8\
+XILINX: C:/Apps/Xilinx/Vivado/2019.1/ids_lite/ISE
+XILINXD_LICENSE_FILE: 27017@licensing02.seas.wustl.edu
+XILINX_DSP: C:/Apps/Xilinx/Vivado/2019.1/ids_lite/ISE
+XILINX_PLANAHEAD: C:/Apps/Xilinx/Vivado/2019.1
+XILINX_SDK: C:/Apps/Xilinx/SDK/2019.1
+XILINX_VIVADO: C:/Apps/Xilinx/Vivado/2019.1
+XILINX_VIVADO_HLS: C:/Apps/Xilinx/Vivado/2019.1
+
+
+GUI allocated memory:	154 MB
+GUI max memory:		3,072 MB
+Engine allocated memory: 618 MB
+
+Copyright 1986-2019 Xilinx, Inc. All Rights Reserved.
+
+*/
+
+// TclEventType: START_GUI
+// Tcl Message: start_gui 
+// TclEventType: PROJECT_OPEN_DIALOG
+// [GUI Memory]: 107 MB (+109831kb) [00:00:08]
+// [Engine Memory]: 583 MB (+459713kb) [00:00:08]
+// by (cl):  Open Project : addNotify
+// Opening Vivado Project: H:\cse462\LAB2_BenGuan\LAB0_BenGuan.xpr. Version: Vivado v2019.1 
+// Tcl Message: open_project H:/cse462/LAB2_BenGuan/LAB0_BenGuan.xpr 
+// TclEventType: DEBUG_PROBE_SET_CHANGE
+// HMemoryUtils.trashcanNow. Engine heap size: 639 MB. GUI used memory: 43 MB. Current time: 1/24/20, 10:38:27 AM GMT-06:00
+// TclEventType: MSGMGR_MOVEMSG
+// TclEventType: FILE_SET_NEW
+// TclEventType: RUN_COMPLETED
+// TclEventType: RUN_STATUS_CHANGE
+// TclEventType: RUN_COMPLETED
+// TclEventType: RUN_STATUS_CHANGE
+// TclEventType: RUN_COMPLETED
+// TclEventType: RUN_STATUS_CHANGE
+// TclEventType: RUN_COMPLETED
+// TclEventType: RUN_STATUS_CHANGE
+// TclEventType: RUN_CURRENT
+// TclEventType: PROJECT_DASHBOARD_NEW
+// TclEventType: PROJECT_DASHBOARD_GADGET_NEW
+// TclEventType: PROJECT_DASHBOARD_GADGET_CHANGE
+// TclEventType: PROJECT_DASHBOARD_GADGET_NEW
+// TclEventType: PROJECT_DASHBOARD_GADGET_CHANGE
+// TclEventType: PROJECT_DASHBOARD_GADGET_NEW
+// TclEventType: PROJECT_DASHBOARD_GADGET_CHANGE
+// TclEventType: PROJECT_DASHBOARD_GADGET_NEW
+// TclEventType: PROJECT_DASHBOARD_GADGET_CHANGE
+// TclEventType: PROJECT_DASHBOARD_GADGET_NEW
+// TclEventType: PROJECT_DASHBOARD_GADGET_CHANGE
+// TclEventType: PROJECT_DASHBOARD_GADGET_NEW
+// TclEventType: PROJECT_DASHBOARD_GADGET_CHANGE
+// TclEventType: FILE_SET_CHANGE
+// TclEventType: PROJECT_NEW
+// [Engine Memory]: 740 MB (+133807kb) [00:00:20]
+// [Engine Memory]: 781 MB (+4358kb) [00:00:22]
+// WARNING: HEventQueue.dispatchEvent() is taking  4869 ms.
+// Tcl Message: open_project H:/cse462/LAB2_BenGuan/LAB0_BenGuan.xpr 
+// Tcl Message: Scanning sources... Finished scanning sources 
+// Tcl Message: INFO: [IP_Flow 19-234] Refreshing IP repositories INFO: [IP_Flow 19-1704] No user IP repositories specified INFO: [IP_Flow 19-2313] Loaded Vivado IP repository 'C:/Apps/Xilinx/Vivado/2019.1/data/ip'. 
+// Tcl Message: open_project: Time (s): cpu = 00:00:21 ; elapsed = 00:00:15 . Memory (MB): peak = 889.137 ; gain = 255.836 
+// Project name: LAB0_BenGuan; location: H:/cse462/LAB2_BenGuan; part: xc7a35tcpg236-1
+// [Engine Memory]: 881 MB (+64365kb) [00:00:25]
+dismissDialog("Open Project"); // by (cl)
+// HMemoryUtils.trashcanNow. Engine heap size: 921 MB. GUI used memory: 49 MB. Current time: 1/24/20, 10:38:42 AM GMT-06:00
+// Tcl Message: update_compile_order -fileset sources_1 
+// Elapsed time: 12 seconds
+expandTree(PAResourceEtoH.FileSetPanel_FILE_SET_PANEL_TREE, "[root, Design Sources, testbench(structure) (testbench.vhd)]", 1); // B (F, cl)
+expandTree(PAResourceEtoH.FileSetPanel_FILE_SET_PANEL_TREE, "[root, Design Sources, testbench(structure) (testbench.vhd), vga1 : vga(mine) (vga.vhd)]", 7); // B (F, cl)
+// PAPropertyPanels.initPanels (uart.vhd) elapsed time: 0.2s
+selectTree(PAResourceEtoH.FileSetPanel_FILE_SET_PANEL_TREE, "[root, Design Sources, testbench(structure) (testbench.vhd), uart1 : uart(Behavioral) (uart.vhd)]", 2, false); // B (F, cl)
+selectTree(PAResourceEtoH.FileSetPanel_FILE_SET_PANEL_TREE, "[root, Design Sources, testbench(structure) (testbench.vhd), uart1 : uart(Behavioral) (uart.vhd)]", 2, false, false, false, false, false, true); // B (F, cl) - Double Click
+selectCodeEditor("uart.vhd", 267, 242); // cl (w, cl)
+selectCodeEditor("uart.vhd", 496, 251); // cl (w, cl)
+selectCodeEditor("uart.vhd", 257, 244); // cl (w, cl)
+selectCodeEditor("uart.vhd", 228, 290); // cl (w, cl)
+// Elapsed time: 32 seconds
+selectCodeEditor("uart.vhd", 195, 264); // cl (w, cl)
+selectCodeEditor("uart.vhd", 326, 282); // cl (w, cl)
+selectCodeEditor("uart.vhd", 155, 313); // cl (w, cl)
+selectCodeEditor("uart.vhd", 120, 296); // cl (w, cl)
+// Elapsed time: 83 seconds
+selectCodeEditor("uart.vhd", 116, 197); // cl (w, cl)
+selectCodeEditor("uart.vhd", 197, 191); // cl (w, cl)
+selectCodeEditor("uart.vhd", 315, 261); // cl (w, cl)
+// Elapsed time: 16 seconds
+selectButton(RDIResourceCommand.RDICommands_SAVE_FILE, (String) null); // B (f, cl)
+// TclEventType: DG_GRAPH_STALE
+// TclEventType: FILE_SET_CHANGE
+selectCodeEditor("uart.vhd", 200, 261); // cl (w, cl)
+// Elapsed time: 16 seconds
+selectButton(RDIResourceCommand.RDICommands_SAVE_FILE, (String) null); // B (f, cl)
+// TclEventType: DG_GRAPH_STALE
+// TclEventType: FILE_SET_CHANGE
+// [GUI Memory]: 114 MB (+1241kb) [00:04:04]
+// Elapsed time: 24 seconds
+selectCodeEditor("uart.vhd", 184, 241); // cl (w, cl)
+selectCodeEditor("uart.vhd", 209, 169); // cl (w, cl)
+selectButton(RDIResourceCommand.RDICommands_SAVE_FILE, (String) null); // B (f, cl)
+// TclEventType: DG_GRAPH_STALE
+// TclEventType: FILE_SET_CHANGE
+// Elapsed time: 15 seconds
+selectCodeEditor("uart.vhd", 410, 263); // cl (w, cl)
+// Elapsed time: 15 seconds
+selectCodeEditor("uart.vhd", 407, 261); // cl (w, cl)
+typeControlKey((HResource) null, "uart.vhd", 'v'); // cl (w, cl)
+selectCodeEditor("uart.vhd", 402, 260); // cl (w, cl)
+selectCodeEditor("uart.vhd", 449, 264); // cl (w, cl)
+// Elapsed time: 13 seconds
+selectButton(RDIResourceCommand.RDICommands_SAVE_FILE, (String) null); // B (f, cl)
+// TclEventType: DG_GRAPH_STALE
+// TclEventType: FILE_SET_CHANGE
+// Elapsed time: 38 seconds
+selectCodeEditor("uart.vhd", 250, 247); // cl (w, cl)
+selectCodeEditor("uart.vhd", 487, 277); // cl (w, cl)
+selectCodeEditor("uart.vhd", 285, 255); // cl (w, cl)
+typeControlKey((HResource) null, "uart.vhd", 'v'); // cl (w, cl)
+// Elapsed time: 14 seconds
+selectCodeEditor("uart.vhd", 305, 293); // cl (w, cl)
+selectCodeEditor("uart.vhd", 225, 221); // cl (w, cl)
+// TclEventType: DG_GRAPH_STALE
+// TclEventType: FILE_SET_CHANGE
+selectCodeEditor("uart.vhd", 271, 314); // cl (w, cl)
+selectCodeEditor("uart.vhd", 281, 301); // cl (w, cl)
+// TclEventType: DG_GRAPH_STALE
+// TclEventType: FILE_SET_CHANGE
+// Tcl Message: update_compile_order -fileset sources_1 
+selectCodeEditor("uart.vhd", 37, 298); // cl (w, cl)
+selectCodeEditor("uart.vhd", 341, 275); // cl (w, cl)
+// Elapsed time: 10 seconds
+selectCodeEditor("uart.vhd", 331, 286); // cl (w, cl)
+typeControlKey((HResource) null, "uart.vhd", 'c'); // cl (w, cl)
+selectCodeEditor("uart.vhd", 109, 292); // cl (w, cl)
+typeControlKey((HResource) null, "uart.vhd", 'v'); // cl (w, cl)
+selectCodeEditor("uart.vhd", 46, 299); // cl (w, cl)
+// Elapsed time: 23 seconds
+selectCodeEditor("uart.vhd", 264, 277); // cl (w, cl)
+typeControlKey((HResource) null, "uart.vhd", 'v'); // cl (w, cl)
+selectCodeEditor("uart.vhd", 250, 281); // cl (w, cl)
+typeControlKey((HResource) null, "uart.vhd", 'v'); // cl (w, cl)
+selectCodeEditor("uart.vhd", 250, 280); // cl (w, cl)
+typeControlKey((HResource) null, "uart.vhd", 'v'); // cl (w, cl)
+selectCodeEditor("uart.vhd", 324, 280); // cl (w, cl)
+selectCodeEditor("uart.vhd", 325, 280); // cl (w, cl)
+typeControlKey((HResource) null, "uart.vhd", 'v'); // cl (w, cl)
+selectCodeEditor("uart.vhd", 376, 274); // cl (w, cl)
+// WARNING: HSwingWorker (Update Runs Swing Worker) is taking 1222 ms. Increasing delay to 3000 ms.
+// Elapsed time: 15 seconds
+selectCodeEditor("uart.vhd", 244, 292); // cl (w, cl)
+// Elapsed time: 33 seconds
+selectCodeEditor("uart.vhd", 374, 254); // cl (w, cl)
+selectCodeEditor("uart.vhd", 183, 284); // cl (w, cl)
+// Elapsed time: 13 seconds
+selectCodeEditor("uart.vhd", 142, 244); // cl (w, cl)
+selectCodeEditor("uart.vhd", 181, 232); // cl (w, cl)
+typeControlKey((HResource) null, "uart.vhd", 'c'); // cl (w, cl)
+selectCodeEditor("uart.vhd", 124, 264); // cl (w, cl)
+typeControlKey((HResource) null, "uart.vhd", 'v'); // cl (w, cl)
+// Elapsed time: 68 seconds
+selectCodeEditor("uart.vhd", 190, 266); // cl (w, cl)
+// Elapsed time: 153 seconds
+selectCodeEditor("uart.vhd", 335, 181); // cl (w, cl)
+selectCodeEditor("uart.vhd", 354, 216); // cl (w, cl)
+// Elapsed time: 10 seconds
+selectCodeEditor("uart.vhd", 147, 159); // cl (w, cl)
+// Elapsed time: 15 seconds
+selectCodeEditor("uart.vhd", 36, 194); // cl (w, cl)
+// Elapsed time: 37 seconds
+selectCodeEditor("uart.vhd", 221, 286); // cl (w, cl)
+selectButton(RDIResourceCommand.RDICommands_SAVE_FILE, (String) null); // B (f, cl)
+// TclEventType: DG_GRAPH_STALE
+// TclEventType: FILE_SET_CHANGE
+selectCodeEditor("uart.vhd", 346, 237); // cl (w, cl)
+// Elapsed time: 20 seconds
+selectCodeEditor("uart.vhd", 140, 175); // cl (w, cl)
+selectCodeEditor("uart.vhd", 260, 194); // cl (w, cl)
+typeControlKey((HResource) null, "uart.vhd", 'c'); // cl (w, cl)
+selectCodeEditor("uart.vhd", 82, 180); // cl (w, cl)
+typeControlKey((HResource) null, "uart.vhd", 'v'); // cl (w, cl)
+selectCodeEditor("uart.vhd", 232, 175); // cl (w, cl)
+selectCodeEditor("uart.vhd", 252, 172); // cl (w, cl)
+selectCodeEditor("uart.vhd", 326, 226); // cl (w, cl)
+selectCodeEditor("uart.vhd", 163, 195); // cl (w, cl)
+selectButton(RDIResourceCommand.RDICommands_SAVE_FILE, (String) null); // B (f, cl)
+// TclEventType: DG_GRAPH_STALE
+// TclEventType: FILE_SET_CHANGE
+// TclEventType: DG_GRAPH_STALE
+// TclEventType: FILE_SET_CHANGE
+// Tcl Message: update_compile_order -fileset sources_1 
+// Elapsed time: 75 seconds
+selectTree(PAResourceEtoH.FileSetPanel_FILE_SET_PANEL_TREE, "[root, Design Sources, testbench(structure) (testbench.vhd)]", 1, true); // B (F, cl) - Node
+selectTree(PAResourceEtoH.FileSetPanel_FILE_SET_PANEL_TREE, "[root, Design Sources, testbench(structure) (testbench.vhd)]", 1, true, false, false, false, false, true); // B (F, cl) - Double Click - Node
+selectTab("PlanAheadTabBaseWorkspace_JideTabbedPane", (HResource) null, "uart.vhd", 1); // k (j, cl)
+selectCodeEditor("uart.vhd", 357, 119); // cl (w, cl)
+selectCodeEditor("uart.vhd", 316, 124); // cl (w, cl)
+typeControlKey((HResource) null, "uart.vhd", 'c'); // cl (w, cl)
+selectCodeEditor("uart.vhd", 182, 139); // cl (w, cl)
+typeControlKey((HResource) null, "uart.vhd", 'v'); // cl (w, cl)
+selectCodeEditor("uart.vhd", 161, 146); // cl (w, cl)
+selectButton(RDIResourceCommand.RDICommands_SAVE_FILE, (String) null); // B (f, cl)
+// TclEventType: DG_GRAPH_STALE
+// TclEventType: FILE_SET_CHANGE
+selectCodeEditor("uart.vhd", 322, 162); // cl (w, cl)
+selectButton(RDIResourceCommand.RDICommands_SAVE_FILE, (String) null); // B (f, cl)
+// TclEventType: DG_GRAPH_STALE
+// TclEventType: FILE_SET_CHANGE
+// HMemoryUtils.trashcanNow. Engine heap size: 921 MB. GUI used memory: 55 MB. Current time: 1/24/20, 11:08:42 AM GMT-06:00
+// HMemoryUtils.trashcanNow. Engine heap size: 921 MB. GUI used memory: 51 MB. Current time: 1/24/20, 11:38:42 AM GMT-06:00

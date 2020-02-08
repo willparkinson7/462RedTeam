@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="testbench_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="glbl" />
+            <top_module name="testbench" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="21143100000fs"></ZoomStartTime>
+      <ZoomEndTime time="21200800001fs"></ZoomEndTime>
+      <Cursor1Time time="21186400000fs"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="175"></NameColumnWidth>
+      <ValueColumnWidth column_width="58"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="36" />
+   <wave_markers>
+      <marker time="34379851000" label="" />
+      <marker time="8144690000" label="" />
+      <marker time="5967956000" label="" />
+   </wave_markers>
+   <wvobject fp_name="/testbench/clk" type="logic">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/reset_h" type="logic">
+      <obj_property name="ElementShortName">reset_h</obj_property>
+      <obj_property name="ObjectShortName">reset_h</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/r" type="array">
+      <obj_property name="ElementShortName">r[1:0]</obj_property>
+      <obj_property name="ObjectShortName">r[1:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/g" type="array">
+      <obj_property name="ElementShortName">g[1:0]</obj_property>
+      <obj_property name="ObjectShortName">g[1:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/b" type="array">
+      <obj_property name="ElementShortName">b[1:0]</obj_property>
+      <obj_property name="ObjectShortName">b[1:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/txd" type="logic">
+      <obj_property name="ElementShortName">txd</obj_property>
+      <obj_property name="ObjectShortName">txd</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/rxd" type="logic">
+      <obj_property name="ElementShortName">rxd</obj_property>
+      <obj_property name="ObjectShortName">rxd</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/uart1/serial_in" type="logic">
+      <obj_property name="ElementShortName">serial_in</obj_property>
+      <obj_property name="ObjectShortName">serial_in</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/uart1/serial_out" type="logic">
+      <obj_property name="ElementShortName">serial_out</obj_property>
+      <obj_property name="ObjectShortName">serial_out</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/uart1/counter1" type="array">
+      <obj_property name="ElementShortName">counter1[11:0]</obj_property>
+      <obj_property name="ObjectShortName">counter1[11:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/uart1/counter2" type="array">
+      <obj_property name="ElementShortName">counter2[11:0]</obj_property>
+      <obj_property name="ObjectShortName">counter2[11:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/rx_data" type="array">
+      <obj_property name="ElementShortName">rx_data[7:0]</obj_property>
+      <obj_property name="ObjectShortName">rx_data[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/tx_data" type="array">
+      <obj_property name="ElementShortName">tx_data[7:0]</obj_property>
+      <obj_property name="ObjectShortName">tx_data[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/rx_data_valid" type="logic">
+      <obj_property name="ElementShortName">rx_data_valid</obj_property>
+      <obj_property name="ObjectShortName">rx_data_valid</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/uart1/tx_start" type="logic">
+      <obj_property name="ElementShortName">tx_start</obj_property>
+      <obj_property name="ObjectShortName">tx_start</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/tx_busy" type="logic">
+      <obj_property name="ElementShortName">tx_busy</obj_property>
+      <obj_property name="ObjectShortName">tx_busy</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/uart1/busy1" type="logic">
+      <obj_property name="ElementShortName">busy1</obj_property>
+      <obj_property name="ObjectShortName">busy1</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/uart1/busy2" type="logic">
+      <obj_property name="ElementShortName">busy2</obj_property>
+      <obj_property name="ObjectShortName">busy2</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/hs" type="logic">
+      <obj_property name="ElementShortName">hs</obj_property>
+      <obj_property name="ObjectShortName">hs</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/vs" type="logic">
+      <obj_property name="ElementShortName">vs</obj_property>
+      <obj_property name="ObjectShortName">vs</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/reset_l_temp" type="logic">
+      <obj_property name="ElementShortName">reset_l_temp</obj_property>
+      <obj_property name="ObjectShortName">reset_l_temp</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/reset_l_sync" type="logic">
+      <obj_property name="ElementShortName">reset_l_sync</obj_property>
+      <obj_property name="ObjectShortName">reset_l_sync</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/src_clk" type="logic">
+      <obj_property name="ElementShortName">src_clk</obj_property>
+      <obj_property name="ObjectShortName">src_clk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/vga_clk" type="logic">
+      <obj_property name="ElementShortName">vga_clk</obj_property>
+      <obj_property name="ObjectShortName">vga_clk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/d" type="array">
+      <obj_property name="ElementShortName">d[31:0]</obj_property>
+      <obj_property name="ObjectShortName">d[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/address" type="array">
+      <obj_property name="ElementShortName">address[31:0]</obj_property>
+      <obj_property name="ObjectShortName">address[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/read" type="logic">
+      <obj_property name="ElementShortName">read</obj_property>
+      <obj_property name="ObjectShortName">read</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/write" type="logic">
+      <obj_property name="ElementShortName">write</obj_property>
+      <obj_property name="ObjectShortName">write</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/done" type="logic">
+      <obj_property name="ElementShortName">done</obj_property>
+      <obj_property name="ObjectShortName">done</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/eprom_ce_l" type="logic">
+      <obj_property name="ElementShortName">eprom_ce_l</obj_property>
+      <obj_property name="ObjectShortName">eprom_ce_l</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/eprom_oe_l" type="logic">
+      <obj_property name="ElementShortName">eprom_oe_l</obj_property>
+      <obj_property name="ObjectShortName">eprom_oe_l</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/sram_ce_l" type="logic">
+      <obj_property name="ElementShortName">sram_ce_l</obj_property>
+      <obj_property name="ObjectShortName">sram_ce_l</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/sram_oe_l" type="logic">
+      <obj_property name="ElementShortName">sram_oe_l</obj_property>
+      <obj_property name="ObjectShortName">sram_oe_l</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/sram_we_l" type="logic">
+      <obj_property name="ElementShortName">sram_we_l</obj_property>
+      <obj_property name="ObjectShortName">sram_we_l</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/vga_ena" type="logic">
+      <obj_property name="ElementShortName">vga_ena</obj_property>
+      <obj_property name="ObjectShortName">vga_ena</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/vga_wea" type="array">
+      <obj_property name="ElementShortName">vga_wea[0:0]</obj_property>
+      <obj_property name="ObjectShortName">vga_wea[0:0]</obj_property>
+   </wvobject>
+</wave_config>

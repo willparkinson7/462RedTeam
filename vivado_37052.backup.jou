@@ -1,0 +1,43 @@
+#-----------------------------------------------------------
+# Vivado v2019.1 (64-bit)
+# SW Build 2552052 on Fri May 24 14:49:42 MDT 2019
+# IP Build 2548770 on Fri May 24 18:01:18 MDT 2019
+# Start of session at: Tue Jan 28 21:24:00 2020
+# Process ID: 37052
+# Current directory: H:/cse462/LAB2_BenGuan
+# Command line: vivado.exe -gui_launcher_event rodinguilauncherevent57116 H:\cse462\LAB2_BenGuan\LAB0_BenGuan.xpr
+# Log file: H:/cse462/LAB2_BenGuan/vivado.log
+# Journal file: H:/cse462/LAB2_BenGuan\vivado.jou
+#-----------------------------------------------------------
+start_gui
+open_project H:/cse462/LAB2_BenGuan/LAB0_BenGuan.xpr
+update_compile_order -fileset sources_1
+launch_simulation
+open_wave_config H:/cse462/LAB2_BenGuan/testbench_behav.wcfg
+source testbench.tcl
+add_force {/testbench/clk} -radix hex {1 0ns} {0 41650ps} -repeat_every 83300ps
+add_force {/testbench/reset_h} -radix hex {1 0ns}
+run 100ns
+add_force {/testbench/uart1/serial_in} -radix hex {1 0ns}
+run 100ns
+add_force {/testbench/uart1/serial_in} -radix hex {0 0ns}
+run 100ns
+run 10us
+run 10us
+add_force {/testbench/uart1/serial_in} -radix hex {1 0ns}
+restart
+add_force {/testbench/clk} -radix hex {1 0ns} {0 41150ps} -repeat_every 82300ps
+add_force {/testbench/reset_h} -radix hex {1 0ns}
+run 200ns
+add_force {/testbench/reset_h} -radix hex {0 0ns}
+add_force {/testbench/uart1/serial_in} -radix hex {1 0ns}
+run 200ns
+add_force {/testbench/uart1/serial_in} -radix hex {0 0ns}
+run 200ns
+run 100ns
+run 20us
+run 20us
+run 120us
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1

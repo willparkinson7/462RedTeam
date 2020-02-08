@@ -1,0 +1,70 @@
+#-----------------------------------------------------------
+# Vivado v2019.1 (64-bit)
+# SW Build 2552052 on Fri May 24 14:49:42 MDT 2019
+# IP Build 2548770 on Fri May 24 18:01:18 MDT 2019
+# Start of session at: Mon Jan 27 18:21:14 2020
+# Process ID: 828
+# Current directory: H:/cse462/LAB2_BenGuan
+# Command line: vivado.exe -gui_launcher_event rodinguilauncherevent10004 H:\cse462\LAB2_BenGuan\LAB0_BenGuan.xpr
+# Log file: H:/cse462/LAB2_BenGuan/vivado.log
+# Journal file: H:/cse462/LAB2_BenGuan\vivado.jou
+#-----------------------------------------------------------
+start_gui
+open_project H:/cse462/LAB2_BenGuan/LAB0_BenGuan.xpr
+update_compile_order -fileset sources_1
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 2
+wait_on_run impl_1
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 2
+wait_on_run impl_1
+reset_run synth_1
+launch_runs impl_1 -jobs 2
+wait_on_run impl_1
+launch_simulation
+launch_simulation
+launch_simulation
+launch_simulation
+source testbench.tcl
+reset_run synth_1
+launch_runs impl_1 -jobs 2
+wait_on_run impl_1
+reset_run synth_1
+launch_runs impl_1 -jobs 2
+wait_on_run impl_1
+reset_run synth_1
+launch_runs impl_1 -jobs 2
+wait_on_run impl_1
+reset_run synth_1
+launch_runs impl_1 -jobs 2
+wait_on_run impl_1
+launch_runs impl_1 -to_step write_bitstream -jobs 2
+wait_on_run impl_1
+close_sim
+launch_simulation
+source testbench.tcl
+add_force {/testbench/clk} -radix hex {1 0ns} {0 41650ps} -repeat_every 83300ps
+add_force {/testbench/reset_h} -radix hex {1 0ns}
+run 500ns
+add_force {/testbench/reset_h} -radix hex {0 0ns}
+add_force {/testbench/rxd} -radix hex {1 0ns}
+run 200ns
+add_force {/testbench/txd} -radix hex {0 0ns}
+remove_forces { {/testbench/txd} }
+add_force {/testbench/rxd} -radix hex {0 0ns}
+run 500ns
+run 500ns
+run 5000ns
+run 20us
+add_force {/testbench/txd} -radix hex {1 0ns}
+save_wave_config {H:/cse462/LAB2_BenGuan/testbench_behav.wcfg}
+add_files -fileset sim_1 -norecurse H:/cse462/LAB2_BenGuan/testbench_behav.wcfg
+set_property xsim.view H:/cse462/LAB2_BenGuan/testbench_behav.wcfg [get_filesets sim_1]
+run 100us
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 2
+wait_on_run impl_1
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 2
+wait_on_run impl_1
+close_sim
