@@ -1,5 +1,9 @@
 import serial
-ser = serial.Serial('/dev/ttyUSB0')  # open serial port, USB is the device found, may need to change the 0 to some other number
+print("Enter the Device number for the FPGA please, this will be an int")
+devNum = input()
+dev = '/dev/ttyUSB' + devNum
+print(dev)
+ser = serial.Serial(dev)  # open serial port, USB is the device found, may need to change the 0 to some other number
 ser.baudrate = 115200
 print(ser.name)         # check which port was really used
 count = 0
