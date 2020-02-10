@@ -34,6 +34,8 @@ ARCHITECTURE structure OF testbench IS
             we: IN STD_LOGIC);
    END COMPONENT;
    
+
+    
    COMPONENT clk_wiz_0
    PORT (clk_out1 : OUT STD_LOGIC;
          clk_out2 : OUT STD_LOGIC;
@@ -123,9 +125,12 @@ BEGIN
             we          => uart_we);
             
   --decode for uart
-  uart_ce <= '1' WHEN (address(31 DOWNTO 4) = "11111111111111111111111110" AND (read = '1' or write = '1')); --tx_data is the bottom 8 bits of data 
-  uart_we <= '1' WHEN (address(31 DOWNTO 4)) = "11111111111111111111111110" AND write = '1' ELSE '0';
-  uart_oe  <= '1' WHEN (address(31 DOWNTO 4)) = "11111111111111111111111110" AND read = '1' ELSE '0';
+  uart_ce <= '1' WHEN (address(31 DOWNTO 4) =   "1111111111111111111111111110" AND (read = '1' or write = '1')); --tx_data is the bottom 8 bits of data 
+  uart_we <= '1' WHEN (address(31 DOWNTO 4)) =  "1111111111111111111111111110" AND write = '1' ELSE '0';
+  uart_oe  <= '1' WHEN (address(31 DOWNTO 4)) = "1111111111111111111111111110" AND read = '1' ELSE '0';
+   
+   
+
    
    mydcm1:clk_wiz_0
    PORT MAP(clk_out1 => src_clk ,
