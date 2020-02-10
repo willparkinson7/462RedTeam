@@ -9,11 +9,11 @@ entity uart is
         reset_l       : IN    STD_LOGIC ;
         serial_in     : In STD_LOGIC;
         serial_out    : OUT STD_LOGIC;
-        d: INOUT  STD_LOGIC_VECTOR (31 DOWNTO 0);
-        a: IN STD_LOGIC_VECTOR (1 DOWNTO 0);
-        ce: IN STD_LOGIC;
-        oe: IN STD_LOGIC;
-        we: IN STD_LOGIC);
+         rx_data      : OUT STD_LOGIC_VECTOR(7 DOWNTO 0) ;
+         tx_data      : IN STD_LOGIC_VECTOR(7 DOWNTO 0) ;
+         rx_data_valid: OUT STD_LOGIC ;
+         tx_start     : IN STD_LOGIC ;
+         tx_busy      : OUT STD_LOGIC );
 end uart;
 
 architecture Behavioral of uart is
@@ -24,19 +24,7 @@ architecture Behavioral of uart is
     SIGNAL serial_in_temp: STD_LOGIC;
     SIGNAL serial_in_sync: STD_LOGIC;
     SIGNAL tx_data_reg :  STD_LOGIC_VECTOR(7 DOWNTO 0); 
-    SIGNAL rx_data      :  STD_LOGIC_VECTOR(7 DOWNTO 0) ;
-    SIGNAL tx_data      :  STD_LOGIC_VECTOR(7 DOWNTO 0) ;
-    SIGNAL rx_data_valid:  STD_LOGIC ;
-    SIGNAL tx_start     :  STD_LOGIC ;
-    SIGNAL tx_busy      :  STD_LOGIC ;
 begin
-
-tx_start <= '1' WHEN ce = '1' and we = '1' and a = "01"; -- the 2 bits of a are bits 3,2
-
-tx_data <= d(7 downto 0) when (we ='1' and ce = '1');
-d(7 downto 0) <= rx_data when  (oe = '1' and ce = '1');     --rx_data should be output of fifo
-d(0) <= rx_data_valid when (a = "10" and oe = '1');
-
 
    syncprocess:PROCESS(clk)  --synchronize the input
    BEGIN
@@ -53,7 +41,6 @@ d(0) <= rx_data_valid when (a = "10" and oe = '1');
             busy1 <= '0';
             counter1 <= (OTHERS => '0');
         ELSE 
-            
             IF (counter1="000000000000" and serial_in_sync = '0') THEN   --check for start bit 
                 busy1 <= '1';
             END IF;
@@ -106,7 +93,6 @@ d(0) <= rx_data_valid when (a = "10" and oe = '1');
             serial_out <= '1';
             counter2 <= (OTHERS => '0');
         ELSE   
-            
             IF (tx_start = '1') THEN --when tx_start is asserted , save tx_Data in reg
                 tx_data_reg <= tx_data;
 				tx_busy <= '1';
@@ -137,11 +123,9 @@ d(0) <= rx_data_valid when (a = "10" and oe = '1');
                     serial_out <= tx_data_reg(6);
               ELSIF counter2 = "110100010000" THEN   --418 *8
                     serial_out <= tx_data_reg(7);
-                    
                ELSIF counter2 = "111010110010" THEN   --418 *9
-                    serial_out <= '1'; --stop bit
-                    tx_busy <= '0';
                     busy2 <= '0';
+                    tx_busy <= '0';
              END IF;
          END IF;
       END IF;
