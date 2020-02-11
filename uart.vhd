@@ -29,7 +29,32 @@ architecture Behavioral of uart is
     SIGNAL rx_data_valid:  STD_LOGIC ;
     SIGNAL tx_start     :  STD_LOGIC ;
     SIGNAL tx_busy      :  STD_LOGIC ;
+    SIGNAL fifo_full    :  STD_LOGIC ;
+    SIGNAL fifo_empty    :  STD_LOGIC ;
+    
+    COMPONENT fifo_generator_0
+   PORT (din:   IN  STD_LOGIC_VECTOR (7 DOWNTO 0);
+          dout: OUT STD_LOGIC_VECTOR (7 DOWNTO 0);
+          full:  OUT STD_LOGIC;
+          empty: OUT STD_LOGIC; 
+          wr_en: IN STD_LOGIC;
+          rd_en: IN STD_LOGIC;
+          clk : IN STD_LOGIC;
+          srst: IN STD_LOGIC);
+    END COMPONENT;
 begin
+
+    myfifo: fifo_generator_0
+    PORT MAP( 
+            din => rx_data,
+            dout => d(7 downto 0),
+            wr_en => rx_data_valid,
+            rd_en => oe,
+            full => fifo_full,
+            empty => fifo_empty,
+            clk => clk,
+            srst => reset_l);  --active high or low???
+   
 
 tx_start <= '1' WHEN ce = '1' and we = '1' and a = "01"; -- the 2 bits of a are bits 3,2
 
