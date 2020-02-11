@@ -13,11 +13,12 @@ while count < 4095:
     count += 1
 print (bytestring)
 numOfBytes = ser.write(bytestring)     # write a string
-bytesRead = ser.read(bytestring.count)
+
 if(numOfBytes == bytestring.count):
     print("Success")
 else:
     print("Failed")
+bytesRead = ser.read(bytestring.count)
 print("Bytes Read:")
 print(bytesRead)
 ser.close()             # close port
