@@ -1,5 +1,5 @@
 import serial
-print("Enter the Device number for the FPGA please, this will be an int")
+print("Enter the COM number for the FPGA please, this will be an int")
 devNum = input()
 dev = 'COM' + devNum
 print(dev)
@@ -24,5 +24,5 @@ else:
 
 bytesRead = ser.read(numOfBytes)
 print("Bytes Read:")
-print(bytesRead)
+print(len(bytesRead))
 ser.close()             # close port
