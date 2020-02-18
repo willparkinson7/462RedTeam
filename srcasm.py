@@ -9,7 +9,17 @@ opcode = {
     "la": 5,
     "lar": 6,
     "br": 8,
+    "brnv": 8,
+    "brzr": 8,
+    "brnz": 8,
+    "brpl": 8,
+    "brmi": 8,
     "brl": 9,
+    "brlzr": 9,
+    "brlnv": 9,
+    "brlnz": 9,
+    "brlpl": 9,
+    "brlmi": 9,
     "add": 12,
     "addi": 13,
     "sub": 14,
@@ -34,7 +44,17 @@ opcode_format = {
     "la": 1,
     "lar": 2,
     "br": 4,
+    "brnv": 4,
+    "brzr": 4,
+    "brnz": 4,
+    "brpl": 4,
+    "brmi": 4,
     "brl": 5,
+    "brlzr": 5,
+    "brlnv": 5,
+    "brlnz": 5,
+    "brlpl": 5,
+    "brlmi": 5,
     "add": 6,
     "addi": 1,
     "sub": 6,
@@ -50,9 +70,18 @@ opcode_format = {
     "shc": 7
 }
 
+branch_condition = {
+    "": 1,
+    "nv": 0,
+    "zr": 2,
+    "nz": 3,
+    "pl": 4,
+    "mi": 5
+}
+
 
 def readfile(filepath):
-    list = []
+    listl = []
     with open(filepath) as file: # open file to parse
         lines = file.readlines()
         for line in lines:
@@ -62,55 +91,184 @@ def readfile(filepath):
                 line = line.replace(':', '')
                 line = line.split(';', 1)[0]
 
-                list.append(line.split())
-                print(line.split())
+                listl.append(line.split())
+                # print(line.split())
     file.close()
 
-    return list
+    return listl
 
 
 def assemble(assembly):
+    assembled = []
     address = 0
     labels = {}  # label : address (-1 if not known)
+
+    # first pass, just looking at labels
     for line in assembly:
+        if line[0] == '.org':
+            address = int(line[1])
+        elif line[0] not in opcode and line[0].isalpha():
+            labels[line[0]] = address
+            address += 4
+        else:
+            address += 4
+
+    # second pass
+    address = 0
+    for line in assembly:
+        print(line)
         binary = ""
         opcode_found = False
-        op = 0
+        op_name = ""
         instr_format = 0
-        instruction = 0
         params = []
         for i in range(0, len(line)):
             if line[i] == '.org':  # parses "org" assembler directives
-                address = line[1]
+                address = int(line[1])
+                break
             elif line[i] in opcode:
                 opcode_found = True
                 # binary = '{0}'.format(address.zfill(8)) + "\t"
-                op = opcode[line[i]]
+                op_name = line[i]
                 instr_format = opcode_format[line[i]]
-                #instruction = convert_opcode_bin(line[i])
+                # instruction = convert_opcode_bin(line[i])
             elif opcode_found:
                 params.append(line[i])
-            else:  # checks if label has been encountered, if not, wait for second pass
-                label = line[i]
-                if label not in labels:
-                    labels[label] = -1
-                else:
-                    label_address = labels[label]
-        binary = create_instruction(instr_format, op, params)
+
+        if line[0] != '.org' and opcode_found:
+            instruction = create_instruction(instr_format, op_name, params, labels)
+            instruction = hex(int(instruction, 2))[2:]
+            binary = hex(address)[2:].zfill(8) + "\t" + instruction
+
+            assembled.append(binary)
+            address += 4
+
+    return assembled
+
 
 # creates a word instruction according to src formatting
 # format - int 1-9 according to the 9 different src instruction formats
 # params - instruction parameters
-def create_instruction(format, opcode, params):
+def create_instruction(instrformat, opcode_name, params, labels):
     instruction = ""
     try:
-        if format == 0:
+        if instrformat == 0:
             return instruction.zfill(27)
-        elif format == 1:
+        elif instrformat == 1:  # ADDI, ANDI, ORI, LD, ST, LA
+            ra = format_register_param(params[0])
+            if 'r' in params[1]:
+                rb = format_register_param(params[1])
+                c2 = "00000000000000000"
+            else:
+                rb = "00000"
+                c2 = params[1]
+                if c2 in labels:
+                    c2 = labels[params[1]]
+                else:
+                    format_register_param(params[1])
+                c2 = format(int(c2), 'b').zfill(17)
+
+            instruction = convert_opcode_bin(opcode_name) + ra + rb + c2
+            return instruction
+        elif instrformat == 2:  # LDR, STR, LAR
+            ra = format_register_param(params[0])
+            c2 = params[1]
+            if c2 in labels:
+                c2 = labels[params[1]]
+            c2 = format(int(c2), 'b').zfill(22)
+
+            instruction = convert_opcode_bin(opcode_name) + ra + c2
+            return instruction
+        elif instrformat == 3:  # NEG, NOT
+            ra = format_register_param(params[0])
+
+            if len(params) == 2:
+                rc = format_register_param(params[1])
+            else:
+                rc = "00000"
+
+            instruction = convert_opcode_bin(opcode_name) + ra + "00000" + rc + "000000000000"
+            return instruction
+        elif instrformat == 4:  # BR
+            rb = format_register_param(params[0])
+
+            if len(params) == 2:
+                rc = format_register_param(params[1])
+            else:
+                rc = "00000"
+
+            # branch conditions
+            cond = branch_conditions(opcode_name)
+
+            instruction = convert_opcode_bin(opcode_name) + "00000" + rb + rc + "000000000" + cond
+            return instruction
+        elif instrformat == 5:  # BRL
+            ra = format_register_param(params[0])
+            rb = format_register_param(params[1])
+
+            if len(params) == 2:
+                rc = format_register_param(params[2])
+            else:
+                rc = "00000"
+
+            # branch conditions
+            cond = branch_conditions(opcode_name)
+
+            instruction = convert_opcode_bin(opcode_name) + ra + rb + rc + "000000000" + cond
+            return instruction
+        elif instrformat == 6:  # ADD, SUB, AND, OR
+            ra = format_register_param(params[0])
+            rb = format_register_param(params[1])
+            rc = format_register_param(params[2])
+
+            instruction = convert_opcode_bin(opcode_name) + ra + rb + rc + "000000000000"
+            return instruction
+        elif instrformat == 7:  # SHR, SHRA, SHL, SHC
+            ra = format_register_param(params[0])
+            rb = format_register_param(params[1])
+
+            if "r" in params[2]:  # 7b
+                rc = format_register_param(params[2])
+
+                instruction = convert_opcode_bin(opcode_name) + ra + rb + rc + "000000000000"
+                return instruction
+            else:  # 7a
+                count = format(params[2], 'b').zfill(5)
+
+                instruction = convert_opcode_bin(opcode_name) + ra + rb + "000000000000" + count
+                return instruction
+        else:  # NOP, STOP
+            instruction = convert_opcode_bin(opcode_name) + "000000000000000000000000000"
+            return instruction
+
+    except Exception as e:
+        print("{*} ERROR: your assembly is wrong, probably")
+        print(e)
 
 
-    except:
-        print("{*} ERROR: your assembly is wrong")
+# takes in branch instruction (brnz) and returns 3-bit condition
+def branch_conditions(opcode_name):
+    condition = ""
+    if "nv" in opcode_name:
+        condition = branch_condition["nv"]
+    elif "zr" in opcode_name:
+        condition = branch_condition["zr"]
+    elif "nz" in opcode_name:
+        condition = branch_condition["nz"]
+    elif "pl" in opcode_name:
+        condition = branch_condition["pl"]
+    elif "mi" in opcode_name:
+        condition = branch_condition["mi"]
+    else:
+        condition = branch_condition[""]
+
+    return format(condition, 'b').zfill(3)
+
+
+# accepts parameter like "r1" or "r2", formats into 5 bit binary
+def format_register_param(reg):
+    reg = reg.replace('r', '')
+    return bin(int(reg))[2:].zfill(5)
 
 
 def convert_opcode_bin(opcode_str):
@@ -126,7 +284,9 @@ def main():
     else:
         filepath = sys.argv[1]
 
-    readfile(filepath)
+    assembly = assemble(readfile(filepath))
+    for i in assembly:
+        print(i)
 
 
 if __name__ == "__main__":
