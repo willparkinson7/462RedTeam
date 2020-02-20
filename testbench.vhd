@@ -104,14 +104,14 @@ ARCHITECTURE structure OF testbench IS
    SIGNAL vga_ena      : STD_LOGIC;
    SIGNAL vga_wea      : STD_LOGIC_VECTOR(0 DOWNTO 0) ;
    
-   SIGNAL rx_data      : STD_LOGIC_VECTOR(7 DOWNTO 0) ;
-   SIGNAL tx_data      : STD_LOGIC_VECTOR(7 DOWNTO 0) ;
-   SIGNAL rx_data_valid: STD_LOGIC ;
-   SIGNAL tx_busy      : STD_LOGIC ;
+   --SIGNAL rx_data      : STD_LOGIC_VECTOR(7 DOWNTO 0) ;
+--   SIGNAL tx_data      : STD_LOGIC_VECTOR(7 DOWNTO 0) ;
+--   SIGNAL rx_data_valid: STD_LOGIC ;
+--   SIGNAL tx_busy      : STD_LOGIC ;
    
 BEGIN
 
-   tx_data <= rx_data + 1;
+   --tx_data <= rx_data;
    
    uart1:uart
    PORT MAP(clk             => src_clk,   
@@ -125,9 +125,9 @@ BEGIN
             we          => uart_we);
             
   --decode for uart
-  uart_ce <= '1' WHEN (address(31 DOWNTO 4) =   "1111111111111111111111111110" AND (read = '1' or write = '1')); --tx_data is the bottom 8 bits of data 
-  uart_we <= '1' WHEN (address(31 DOWNTO 4)) =  "1111111111111111111111111110" AND write = '1' ELSE '0';
-  uart_oe  <= '1' WHEN (address(31 DOWNTO 4)) = "1111111111111111111111111110" AND read = '1' ELSE '0';
+  uart_ce <= '1' WHEN (address(31 DOWNTO 4) =   "1111111111111111111111111110" AND (read = '1' or write = '1') )ELSE '0'; --tx_data is the bottom 8 bits of data 
+  uart_we <= '1' WHEN (address(31 DOWNTO 4) =  "1111111111111111111111111110" AND write = '1') ELSE '0';
+  uart_oe  <= '1' WHEN (address(31 DOWNTO 4) = "1111111111111111111111111110" AND read = '1') ELSE '0';
    
    
 
@@ -153,7 +153,7 @@ BEGIN
 
    sram_we_l  <= '0' WHEN write = '1' ELSE '1' ;
 
-   done <= '1' WHEN (eprom_ce_l = '0' OR sram_ce_l = '0' OR vga_ena = '1') ELSE '0' ;
+   done <= '1' WHEN (eprom_ce_l = '0' OR sram_ce_l = '0' OR vga_ena = '1' OR uart_ce = '1') ELSE '0' ;
 
    rsrc1:rsrc      
    PORT MAP(clk       => src_clk,

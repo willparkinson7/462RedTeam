@@ -24,13 +24,15 @@ architecture Behavioral of uart is
     SIGNAL serial_in_temp: STD_LOGIC;
     SIGNAL serial_in_sync: STD_LOGIC;
     SIGNAL tx_data_reg :  STD_LOGIC_VECTOR(7 DOWNTO 0); 
-    SIGNAL rx_data      :  STD_LOGIC_VECTOR(7 DOWNTO 0) ;
+    SIGNAL rx_data      :  STD_LOGIC_VECTOR(7 DOWNTO 0) := "00000000";
     SIGNAL tx_data      :  STD_LOGIC_VECTOR(7 DOWNTO 0) ;
-    SIGNAL rx_data_valid:  STD_LOGIC ;
+    SIGNAL rx_data_valid:  STD_LOGIC := '0';
     SIGNAL tx_start     :  STD_LOGIC ;
     SIGNAL tx_busy      :  STD_LOGIC ;
     SIGNAL fifo_full    :  STD_LOGIC ;
-    SIGNAL fifo_empty    :  STD_LOGIC ;
+    SIGNAL fifo_dout    :  STD_LOGIC_VECTOR(7 DOWNTO 0) ;
+    SIGNAL reset_h :  STD_LOGIC ;
+    SIGNAL fifo_empty    :  STD_LOGIC ; --:= '1';
     
     COMPONENT fifo_generator_0
    PORT (din:   IN  STD_LOGIC_VECTOR (7 DOWNTO 0);
@@ -47,21 +49,25 @@ begin
     myfifo: fifo_generator_0
     PORT MAP( 
             din => rx_data,
-            dout => d(7 downto 0),
+            dout => fifo_dout,      --tie signal to tri state buffer based on read enable
             wr_en => rx_data_valid,
             rd_en => oe,
             full => fifo_full,
-            empty => fifo_empty,
+            empty => fifo_empty,            --- has to be put into a register   rx_data_flag, need rx_data_flag to be 1 when there's data to read
             clk => clk,
-            srst => reset_l);  --active high or low???
+            srst => reset_h);  --active high or low???
    
 
-tx_start <= '1' WHEN ce = '1' and we = '1' and a = "01"; -- the 2 bits of a are bits 3,2
+tx_start <= '1' WHEN (ce = '1' and we = '1' and a = "01") ELSE '0'; -- the 2 bits of a are bits 3,2
 
-tx_data <= d(7 downto 0) when (we ='1' and ce = '1');
-d(7 downto 0) <= rx_data when  (oe = '1' and ce = '1');     --rx_data should be output of fifo
-d(0) <= rx_data_valid when (a = "10" and oe = '1');
+tx_data <= d(7 downto 0) when (we ='1' and ce = '1') ELSE "00000000";
+--d(7 downto 0) <= rx_data when  (oe = '1' and ce = '1');     --rx_data should be output of fifo
+d(31 downto 0) <= "000000000000000000000000" & fifo_dout when (ce='1' AND oe='1' AND a(1 downto 0)="11") ELSE "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ";       --rx_data
+--d(0) <= rx_data_valid when (a = "10" and oe = '1');
+d(31 downto 0) <= "0000000000000000000000000000000" & NOT(fifo_empty) when (ce='1' AND oe='1' AND a(1 downto 0)="10") ELSE "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ";  --rx_data_flag
 
+d(31 downto 0) <= "0000000000000000000000000000000" & tx_busy when (ce='1' AND we='1' AND a(1 downto 0)="00") ELSE "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ";  --tx_start
+reset_h <= NOT(reset_l) ;
 
    syncprocess:PROCESS(clk)  --synchronize the input
    BEGIN
@@ -77,6 +83,7 @@ d(0) <= rx_data_valid when (a = "10" and oe = '1');
         IF (reset_l ='0') THEN 
             busy1 <= '0';
             counter1 <= (OTHERS => '0');
+            --fifo_empty <= '1';
         ELSE 
             
             IF (counter1="000000000000" and serial_in_sync = '0') THEN   --check for start bit 
@@ -128,6 +135,7 @@ d(0) <= rx_data_valid when (a = "10" and oe = '1');
       IF (clk = '1' AND clk'event) THEN
         IF (reset_l ='0') THEN 
             busy2 <= '0';
+            tx_busy <= '0' ;
             serial_out <= '1';
             counter2 <= (OTHERS => '0');
         ELSE   
