@@ -1,4 +1,5 @@
 import sys
+import numpy as np
 
 opcode = {
     "nop": 0,
@@ -32,7 +33,8 @@ opcode = {
     "shr": 26,
     "shra": 27,
     "shl": 28,
-    "shc": 29
+    "shc": 29,
+    "stop": 31,
 }
 
 opcode_format = {
@@ -67,7 +69,8 @@ opcode_format = {
     "shr": 7,
     "shra": 7,
     "shl": 7,
-    "shc": 7
+    "shc": 7,
+    "stop": 8
 }
 
 branch_condition = {
@@ -102,22 +105,29 @@ def assemble(assembly):
     assembled = []
     address = 0
     labels = {}  # label : address (-1 if not known)
+    begin = True
 
     # first pass, just looking at labels
     for line in assembly:
-        if line[0] == '.org':
-            address = int(line[1])
-        elif line[0] not in opcode and line[0].isalpha():
-            labels[line[0]] = address
-            address += 4
-        else:
-            address += 4
+        if line:
+            if line[0] == '.org' and begin:
+                address = int(line[1])
+                assembled.append(hex(address)[2:].zfill(8))
+                begin = False
+            elif line[0] == 'org':
+                address = int(line[1])
+            elif len(line) > 1 and line[1] == '.org':
+                labels[line[0]] = address
+                address = int(line[2])
+            elif line[0] not in opcode:
+                labels[line[0]] = address
+                address += 4
+            else:
+                address += 4
 
     # second pass
     address = 0
     for line in assembly:
-        print(line)
-        binary = ""
         opcode_found = False
         op_name = ""
         instr_format = 0
@@ -126,18 +136,19 @@ def assemble(assembly):
             if line[i] == '.org':  # parses "org" assembler directives
                 address = int(line[1])
                 break
+            elif len(line) > 1 and line[1] == '.org':
+                address = int(line[2])
+                break
             elif line[i] in opcode:
                 opcode_found = True
-                # binary = '{0}'.format(address.zfill(8)) + "\t"
                 op_name = line[i]
                 instr_format = opcode_format[line[i]]
-                # instruction = convert_opcode_bin(line[i])
             elif opcode_found:
                 params.append(line[i])
 
-        if line[0] != '.org' and opcode_found:
-            instruction = create_instruction(instr_format, op_name, params, labels)
-            instruction = hex(int(instruction, 2))[2:]
+        if opcode_found:
+            instruction = create_instruction(instr_format, op_name, params, labels, address)
+            instruction = (hex(int(instruction, 2))[2:]).zfill(8)
             binary = hex(address)[2:].zfill(8) + "\t" + instruction
 
             assembled.append(binary)
@@ -149,7 +160,9 @@ def assemble(assembly):
 # creates a word instruction according to src formatting
 # format - int 1-9 according to the 9 different src instruction formats
 # params - instruction parameters
-def create_instruction(instrformat, opcode_name, params, labels):
+# labels - dictionary of labels (label name : address)
+# address - current address of instruction
+def create_instruction(instrformat, opcode_name, params, labels, address):
     instruction = ""
     try:
         if instrformat == 0:
@@ -157,16 +170,24 @@ def create_instruction(instrformat, opcode_name, params, labels):
         elif instrformat == 1:  # ADDI, ANDI, ORI, LD, ST, LA
             ra = format_register_param(params[0])
             if 'r' in params[1]:
-                rb = format_register_param(params[1])
+                rb = params[1]
                 c2 = "00000000000000000"
+                # handles displacement addressing
+                if '(' in rb and ')' in rb:
+                    displacement = rb.split('(')[0]
+                    if displacement != '':
+                        c2 = np.binary_repr(int(displacement), width=17)
+                    rb = rb.split('(')[1]
+                    rb = rb.replace(')', '')
+                elif len(params) == 3:
+                    c2 = np.binary_repr(int(params[2]), width=17)
+                rb = format_register_param(rb)
             else:
                 rb = "00000"
                 c2 = params[1]
                 if c2 in labels:
                     c2 = labels[params[1]]
-                else:
-                    format_register_param(params[1])
-                c2 = format(int(c2), 'b').zfill(17)
+                c2 = np.binary_repr(int(c2), width=17)[-17:]
 
             instruction = convert_opcode_bin(opcode_name) + ra + rb + c2
             return instruction
@@ -175,7 +196,8 @@ def create_instruction(instrformat, opcode_name, params, labels):
             c2 = params[1]
             if c2 in labels:
                 c2 = labels[params[1]]
-            c2 = format(int(c2), 'b').zfill(22)
+            c2 = c2 - address - 4
+            c2 = np.binary_repr(int(c2), width=22)[-22:]
 
             instruction = convert_opcode_bin(opcode_name) + ra + c2
             return instruction
@@ -206,7 +228,7 @@ def create_instruction(instrformat, opcode_name, params, labels):
             ra = format_register_param(params[0])
             rb = format_register_param(params[1])
 
-            if len(params) == 2:
+            if len(params) == 3:
                 rc = format_register_param(params[2])
             else:
                 rc = "00000"
@@ -233,7 +255,7 @@ def create_instruction(instrformat, opcode_name, params, labels):
                 instruction = convert_opcode_bin(opcode_name) + ra + rb + rc + "000000000000"
                 return instruction
             else:  # 7a
-                count = format(params[2], 'b').zfill(5)
+                count = format(int(params[2]), 'b').zfill(5)
 
                 instruction = convert_opcode_bin(opcode_name) + ra + rb + "000000000000" + count
                 return instruction
@@ -268,6 +290,7 @@ def branch_conditions(opcode_name):
 # accepts parameter like "r1" or "r2", formats into 5 bit binary
 def format_register_param(reg):
     reg = reg.replace('r', '')
+
     return bin(int(reg))[2:].zfill(5)
 
 
