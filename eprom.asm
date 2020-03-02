@@ -18,31 +18,73 @@ BOT:	ld r2, 0(r30) ;
 QMC:    ld r1, 0(r30) ;
 	brnz r25, r1 ;		wait until tx_busy_flag is low
 	addi r2, r0, 82 ;	R	
+	ld r1, 0(r30) ;
+	addi r3, r25, 3 ;
+	brnz r3, r1 ;		wait until tx_busy_flag is low
 	st r2, (r29) ;		write to tx_data
 	addi r2, r0, 73 ;	I
+	ld r1, 0(r30) ;
+	addi r3, r25, 8 ;
+	brnz r3, r1 ;		wait until tx_busy_flag is low
 	st r2, (r29) ;		write to tx_data
 	addi r2, r0, 67 ;	C
+	ld r1, 0(r30) ;
+	addi r3, r25, 13 ;
+	brnz r3, r1 ;		wait until tx_busy_flag is low
 	st r2, (r29) ;		write to tx_data
 	addi r2, r0, 72 ;	H
+	ld r1, 0(r30) ;
+	addi r3, r25, 18 ;
+	brnz r3, r1 ;		wait until tx_busy_flag is low
 	st r2, (r29) ;		write to tx_data
 	addi r2, r0, 65 ;	A
+	ld r1, 0(r30) ;
+	addi r3, r25, 23 ;
+	brnz r3, r1 ;		wait until tx_busy_flag is low
 	st r2, (r29) ;		write to tx_data
 	addi r2, r0, 82 ;	R
+	ld r1, 0(r30) ;
+	addi r3, r25, 28 ;
+	brnz r3, r1 ;		wait until tx_busy_flag is low
 	st r2, (r29) ;		write to tx_data
 	addi r2, r0, 68 ;	D
+	ld r1, 0(r30) ;
+	addi r3, r25, 33 ;
+	brnz r3, r1 ;		wait until tx_busy_flag is low
 	st r2, (r29) ;		write to tx_data
 	addi r2, r0, 85 ;	U
+	ld r1, 0(r30) ;
+	addi r3, r25, 38 ;
+	brnz r3, r1 ;		wait until tx_busy_flag is low
 	st r2, (r29) ;		write to tx_data
 	addi r2, r0, 73 ;	I
+	ld r1, 0(r30) ;
+	addi r3, r25, 43 ;
+	brnz r3, r1 ;		wait until tx_busy_flag is low
 	st r2, (r29) ;		write to tx_data
 	addi r2, r0, 78 ;	N
+	ld r1, 0(r30) ;
+	addi r3, r25, 48 ;
+	brnz r3, r1 ;		wait until tx_busy_flag is low
 	st r2, (r29) ;		write to tx_data
 	addi r2, r0, 79 ;	O
+	ld r1, 0(r30) ;
+	addi r3, r25, 53 ;
+	brnz r3, r1 ;		wait until tx_busy_flag is low
 	st r2, (r29) ;		write to tx_data
 	addi r2, r0, 32 ;	_
+	ld r1, 0(r30) ;
+	addi r3, r25, 58 ;
+	brnz r3, r1 ;		wait until tx_busy_flag is low
 	st r2, (r29) ;		write to tx_data
 	addi r2, r0, 86 ;	V
+	ld r1, 0(r30) ;
+	addi r3, r25, 63 ;
+	brnz r3, r1 ;		wait until tx_busy_flag is low
 	st r2, (r29) ;		write to tx_data
 	addi r2, r0, 50 ;	2
+	ld r1, 0(r30) ;
+	addi r3, r25, 68 ;
+	brnz r3, r1 ;		wait until tx_busy_flag is low
 	st r2, (r29) ;		write to tx_data
 	br r31 ;	
