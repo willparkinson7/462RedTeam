@@ -1,20 +1,55 @@
 (SRCTools Version 3.1.1)
  HexLoc     DecLoc    MachWord   Label        Instruction                Comment
-00000000  0000000000  2e800024                la r26, BOT                ;
-00000004  0000000004  2fc00018                la r31, TOP                ;
-00000008  0000000008  2f81ffe0                la r30, -32                ;
-0000000c  0000000012  2f41ffe4                la r29, -28                ;
-00000010  0000000016  2f01ffe8                la r28, -24                ;
-00000014  0000000020  2ec1ffec                la r27, -20                ;
+00000000  0000000000  2e400040                la r25, QMC                ;
+00000004  0000000004  2d800030                la r22, BOT                ;
+00000008  0000000008  2fc0001c                la r31, TOP                ;
+0000000c  0000000012  2f81ffe0                la r30, -32                ;	TX_BUSY_FLAG
+00000010  0000000016  2f41ffe4                la r29, -28                ;	TX_DATA
+00000014  0000000020  2f01ffe8                la r28, -24                ;	RX_DATA_FLAG
+00000018  0000000024  2ec1ffec                la r27, -20                ;	RX_DATA
                                                                          
-00000018  0000000024  08780000  TOP:          ld r1, 0(r28)              ;
-0000001c  0000000028  403e1002                brzr r31, r1               ;
-00000020  0000000032  08f60000                ld r3, 0(r27)              ;
-00000024  0000000036  08bc0000  BOT:          ld r2, 0(r30)              ;
-00000028  0000000040  40342003                brnz r26, r2               ;
-0000002c  0000000044  18fa0000                st r3, 0(r29)              ;
-00000030  0000000048  403e0001                br r31                     ;
+0000001c  0000000028  08780000  TOP:          ld r1, 0(r28)              ;	put rx_data_flag into r1
+00000020  0000000032  403e1002                brzr r31, r1               ;  branch to top if r1 is zero
+00000024  0000000036  08760000                ld r1, 0(r27)              ;		put rx_data into r1
+00000028  0000000040  6883ffc1                addi r2, r1, -63           ; 	put ? ascii check into r2
+0000002c  0000000044  40322002                brzr r25, r2               ;		go to ? assembly if difference is zero
+00000030  0000000048  08bc0000  BOT:          ld r2, 0(r30)              ;		
+00000034  0000000052  402c2003                brnz r22, r2               ;
+00000038  0000000056  187a0000                st r1, 0(r29)              ;		spit letter back out
+0000003c  0000000060  403e0001                br r31                     ;		go to top and get new rx_data
+00000040  0000000064  087c0000  QMC:          ld r1, 0(r30)              ;
+00000044  0000000068  40321003                brnz r25, r1               ;		wait until tx_busy_flag is low
+00000048  0000000072  68800052                addi r2, r0, 82            ;	R	
+0000004c  0000000076  18ba0000                st r2, (r29)               ;		write to tx_data
+00000050  0000000080  68800049                addi r2, r0, 73            ;	I
+00000054  0000000084  18ba0000                st r2, (r29)               ;		write to tx_data
+00000058  0000000088  68800043                addi r2, r0, 67            ;	C
+0000005c  0000000092  18ba0000                st r2, (r29)               ;		write to tx_data
+00000060  0000000096  68800048                addi r2, r0, 72            ;	H
+00000064  0000000100  18ba0000                st r2, (r29)               ;		write to tx_data
+00000068  0000000104  68800041                addi r2, r0, 65            ;	A
+0000006c  0000000108  18ba0000                st r2, (r29)               ;		write to tx_data
+00000070  0000000112  68800052                addi r2, r0, 82            ;	R
+00000074  0000000116  18ba0000                st r2, (r29)               ;		write to tx_data
+00000078  0000000120  68800044                addi r2, r0, 68            ;	D
+0000007c  0000000124  18ba0000                st r2, (r29)               ;		write to tx_data
+00000080  0000000128  68800055                addi r2, r0, 85            ;	U
+00000084  0000000132  18ba0000                st r2, (r29)               ;		write to tx_data
+00000088  0000000136  68800049                addi r2, r0, 73            ;	I
+0000008c  0000000140  18ba0000                st r2, (r29)               ;		write to tx_data
+00000090  0000000144  6880004e                addi r2, r0, 78            ;	N
+00000094  0000000148  18ba0000                st r2, (r29)               ;		write to tx_data
+00000098  0000000152  6880004f                addi r2, r0, 79            ;	O
+0000009c  0000000156  18ba0000                st r2, (r29)               ;		write to tx_data
+000000a0  0000000160  68800020                addi r2, r0, 32            ;	_
+000000a4  0000000164  18ba0000                st r2, (r29)               ;		write to tx_data
+000000a8  0000000168  68800056                addi r2, r0, 86            ;	V
+000000ac  0000000172  18ba0000                st r2, (r29)               ;		write to tx_data
+000000b0  0000000176  68800032                addi r2, r0, 50            ;	2
+000000b4  0000000180  18ba0000                st r2, (r29)               ;		write to tx_data
+000000b8  0000000184  403e0001                br r31                     ;	
 
 --- Symbol Table ---
-TOP: 24
-BOT: 36
+QMC: 64
+TOP: 28
+BOT: 48
