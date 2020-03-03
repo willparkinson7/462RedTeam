@@ -72,10 +72,10 @@ QMC:    ld r1, 0(r30) ;		r25
 	br r31 ;
 DL:	addi r5, r0, 1000 ;		r6 holds count to delay, r5 holds counter, r4 for comparison, r15 for pc
 	addi r19, r20, 8 ;
-	ld r1, 0(r30) ;		r25
-	brnz r25, r1 ;		wait until tx_busy_flag is low
+	ld r1, 0(r30) ;			wait until tx_busy_flag is low
 	addi r5, r5, -1 ;
-	brnz r19, r5 ;
+	brnz r19, r5 ;	
+	brnz r19, r1 ;
 	br r15 ;
 RC:	ld r1, 0(r28) ;	put rx_data_flag into r1		
 	brzr r24, r1 ;  branch to RC if r1 is zero
