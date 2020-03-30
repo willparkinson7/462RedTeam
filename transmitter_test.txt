@@ -1,0 +1,13 @@
+	la r20, RC ;
+	la r31, TOP ;
+	la r30, -32 ;	TX_BUSY_FLAG
+	la r29, -28 ;	TX_DATA
+
+RC:	la r3, 65 ;	r3 is our ascii
+TOP:	ld r1, 0(r30) ;		load tx_busy_flag
+	brnz r31, r1 ;		wait until tx_busy_flag is low
+	st r3, 0(r29);		put ascii into tx_data
+	addi r3, r3, 1 ;	increment ascii
+	addi r4, r3, -123 ;	if you've hit z, reset ascii
+	brmi r31, r4 ;		if within range, branch to TOP
+	br r20 ;			

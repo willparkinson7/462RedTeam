@@ -1,14 +1,15 @@
 	la r25, QMC ;
 	la r22, BOT ;
-	la r24, RC ;
-	la r21, RCT ;
+	la r21, RAS ; READ ADDRESS/LENGTH START
 	la r20, DL ;
-	la r22, RA ;	READ ADDRESS, uses r3 for counter, r4 length, r5 address
+	la r24, PC ;
+	la r22, RL ;	READ ADDRESS/LENGTH, uses r3 for counter, r4 length, r5 address
 	la r31, TOP ;
 	la r30, -32 ;	TX_BUSY_FLAG
 	la r29, -28 ;	TX_DATA
 	la r28, -24 ;	RX_DATA_FLAG
 	la r27, -20 ;	RX_DATA
+	la r23, 4096 ;	SRAM
 
 TOP:	ld r1, 0(r28);	put rx_data_flag into r1
 	brzr r31, r1 ;  branch to top if r1 is zero
@@ -16,18 +17,18 @@ TOP:	ld r1, 0(r28);	put rx_data_flag into r1
 	addi r2, r1, -63 ; 	put ? ascii check into r2
 	brzr r25, r2 ;		go to ? assembly if difference is zero
 	addi r3, r1, -112 ;	put p ascii into r3
-	brzr r26, r3 ;		go to p assembly if equal to rx_data
-	addi r4, r1, -114 ;	put r ascii into r4
-	brzr r24, r4 ;		go to r assembly if equal to rx_data
-	addi r5, r1, -119 ;	put w ascii into r5
-	brzr r23, r5 ;		go to w assembly if equal to rx_data
-BOT:	ld r2, 0(r30) ;		
+	brzr r21, r3 ;		go to p assembly if equal to rx_data
+;	addi r4, r1, -114 ;	put r ascii into r4
+;	brzr r24, r4 ;		go to r assembly if equal to rx_data
+;	addi r5, r1, -119 ;	put w ascii into r5
+;	brzr r23, r5 ;		go to w assembly if equal to rx_data
+BOT:	ld r2, 0(r30) ;
 	brnz r22, r2 ;
 	st r1, 0(r29) ;		spit letter back out
 	br r31 ;		go to top and get new rx_data
 QMC:    ld r1, 0(r30) ;		r25
 	brnz r25, r1 ;		wait until tx_busy_flag is low
-	addi r2, r0, 82 ;	R	
+	addi r2, r0, 82 ;	R
 	brl r15, r20 ;
 	st r2, (r29) ;		write to tx_data
 	addi r2, r0, 73 ;	I
@@ -70,31 +71,67 @@ QMC:    ld r1, 0(r30) ;		r25
 	brl r15, r20 ;
 	st r2, (r29) ;		write to tx_data
 	br r31 ;
-DL:	addi r5, r0, 1000 ;		r6 holds count to delay, r5 holds counter, r4 for comparison, r15 for pc
-	addi r19, r20, 8 ;
-	ld r1, 0(r30) ;			wait until tx_busy_flag is low
-	addi r5, r5, -1 ;
-	brnz r19, r5 ;	
-	brnz r19, r1 ;
+DL:	ld r1, 0(r30) ;			wait until tx_busy_flag is low
+	brnz r20, r1 ;
 	br r15 ;
-RC:	ld r1, 0(r28) ;	put rx_data_flag into r1		
-	brzr r24, r1 ;  branch to RC if r1 is zero
-	ld r1, 0(r27) ;		put rx_data into r1
-	addi r2, r1, -32 ; 	put _ ascii check into r2
-	brnz r31, r2 ;		exit if not _
-	ld r3, (r0) ;		put zero into r3 (counter)
-	ld r5, (r0) ;		zero out address
-RA:	ld r1, 0(r28) ;
+RAS:	la r3, 0 ;		put zero into r3 (counter)
+	la r5, 0 ;		zero out address
+;	addi r2, r0, 65 ;	A
+;	brl r15, r20 ;
+;	st r2, (r29) ;		write to tx_data
+;	addi r2, r0, 58 ;	:
+;	brl r15, r20 ;
+;	st r2, (r29) ;		write to tx_data
+RL:	ld r1, 0(r28) ;	check if rx_data has anything
 	brzr r22, r1 ;  	branch to RA if r1 is zero
 	ld r1, 0(r27) ;		put rx_data into r1
+	st r1, 0(r29) ;		output rx_data (just to be sure)
 	shl r5, r5, 8 ;
 	or r5, r5, r1 ;
 	addi r3, r3, 1 ;
-	addi r4, r3, -4 ;	r4 negative if 
-	brmi r22, r4 ; 
-	st r3, (r29) ;
-	ld r2, 0(r5) ;		load from memory
-RCT:	ld r1, 0(r30) ;		r25
-	brnz r21, r1 ;		wait until tx_busy_flag is low
-	st r2, (r29) ;		store in tx_data
+	addi r4, r3, -4 ;	r4 negative if
+	brmi r22, r4 ;
+
+;	addi r2, r0, 68 ;	D
+;	brl r15, r20 ;
+;	st r2, (r29) ;		write to tx_data
+;	addi r2, r0, 79 ;	O
+;	brl r15, r20 ;
+;	st r2, (r29) ;		write to tx_data
+;	addi r2, r0, 78 ;	N
+;	brl r15, r20 ;
+;	st r2, (r29) ;		write to tx_data
+;	addi r2, r0, 69 ;	E
+;	brl r15, r20 ;
+;	st r2, (r29) ;		write to tx_data
+	br r15 ;			branch to program counter (P, as of right now)
+PCS:la r23, 4096 ;	SRAM
+	brl r15, r21 ;		read length into r5
+	la r3, 0 ;			r2 is big counter
+	neg r6, r5 ;		r6 is comparison
+	addi r6, r6, -1 ; 	compensate for brmi not counting zero
+PC:	ld r1, 0(r28) ;	check if rx_data has anything
+	brzr r22, r1 ;  	branch to RA if r1 is zero
+	ld r1, 0(r27) ;		put rx_data into r1
+	st r1, 0(r29) ;		output rx_data (just to be sure)
+	addi r23, r23, 8 ;
+	st r1, (r23) ;
+	addi r3, r3, 1 ;	one byte
+	add r4, r3, r6;	r4 negative if
+	brmi r24, r4 ;
+	addi r2, r0, 69 ;	E
+	brl r15, r20 ;
+	st r2, (r29) ;		write to tx_data
+	addi r2, r0, 88 ;	X
+	brl r15, r20 ;
+	st r2, (r29) ;		write to tx_data
+	addi r2, r0, 73 ;	I
+	brl r15, r20 ;
+	st r2, (r29) ;		write to tx_data
+	addi r2, r0, 84 ;	T
+	brl r15, r20 ;
+	st r2, (r29) ;		write to tx_data
+	addi r2, r0, 80 ;	P
+	brl r15, r20 ;
+	st r2, (r29) ;		write to tx_data
 	br r31 ;

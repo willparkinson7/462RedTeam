@@ -17,10 +17,6 @@ entity uart is
 end uart;
 
 architecture Behavioral of uart is
-    SIGNAL counter1 :STD_LOGIC_VECTOR(11 DOWNTO 0); -- count from 1 to ~4000, thus 12 bits 
-    SIGNAL counter2 :STD_LOGIC_VECTOR(11 DOWNTO 0); 
-    SIGNAL busy1: STD_LOGIC;
-    SIGNAL busy2: STD_LOGIC;
     SIGNAL serial_in_temp: STD_LOGIC;
     SIGNAL serial_in_sync: STD_LOGIC;
     SIGNAL tx_data_reg :  STD_LOGIC_VECTOR(7 DOWNTO 0); 
@@ -28,13 +24,20 @@ architecture Behavioral of uart is
     SIGNAL tx_data      :  STD_LOGIC_VECTOR(7 DOWNTO 0) ;
     SIGNAL rx_data_valid:  STD_LOGIC := '0';
     SIGNAL tx_start     :  STD_LOGIC ;
-    SIGNAL tx_busy      :  STD_LOGIC ;
+    SIGNAL tx_busy      :  STD_LOGIC := '0';
     SIGNAL fifo_full    :  STD_LOGIC ;
     SIGNAL fifo_dout    :  STD_LOGIC_VECTOR(7 DOWNTO 0) ;
     SIGNAL reset_h :  STD_LOGIC ;
     SIGNAL fifo_empty    :  STD_LOGIC ; --:= '1';
-    
-    COMPONENT fifo_generator_0
+	
+	SIGNAL receiving : STD_LOGIC := '0';
+	SIGNAL transmitting: STD_LOGIC := '0';
+	SIGNAL rx_data_in_progress: STD_LOGIC := '0';
+	SIGNAL count1        : STD_LOGIC_VECTOR(12 DOWNTO 0) ;
+	SIGNAL count2        : STD_LOGIC_VECTOR(12 DOWNTO 0) ;
+	SIGNAL tx_data_save  : STD_LOGIC_VECTOR(7 DOWNTO 0) ;
+
+   COMPONENT fifo_generator_0
    PORT (din:   IN  STD_LOGIC_VECTOR (7 DOWNTO 0);
           dout: OUT STD_LOGIC_VECTOR (7 DOWNTO 0);
           full:  OUT STD_LOGIC;
@@ -66,118 +69,144 @@ d(31 downto 0) <= "000000000000000000000000" & fifo_dout when (ce='1' AND oe='1'
 --d(0) <= rx_data_valid when (a = "10" and oe = '1');
 d(31 downto 0) <= "0000000000000000000000000000000" & NOT(fifo_empty) when (ce='1' AND oe='1' AND a(1 downto 0)="10") ELSE "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ";  --rx_data_flag
 
-d(31 downto 0) <= "0000000000000000000000000000000" & tx_busy when (ce='1' AND we='1' AND a(1 downto 0)="00") ELSE "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ";  --tx_start
+d(31 downto 0) <= "0000000000000000000000000000000" & tx_busy when (ce='1' AND oe='1' AND a(1 downto 0)="00") ELSE "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ";  --tx_start
+--d(31 downto 0) <= "0000000000001011101010111110000" & tx_busy when (ce='1' AND oe='1' AND a(1 downto 0)="00") ELSE "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ";  --tx_start
+
+
 reset_h <= NOT(reset_l) ;
 
-   syncprocess:PROCESS(clk)  --synchronize the input
-   BEGIN
-      IF (clk = '1' AND clk'event) THEN
-         serial_in_temp <=  serial_in ;  
-         serial_in_sync <= serial_in_temp;
-      END IF;
-   END PROCESS syncprocess ;
    
-   receiver_process:PROCESS(clk)
-   BEGIN
-      IF (clk = '1' AND clk'event) THEN
-        IF (reset_l ='0') THEN 
-            busy1 <= '0';
-            counter1 <= (OTHERS => '0');
-            --fifo_empty <= '1';
-        ELSE 
-            
-            IF (counter1="000000000000" and serial_in_sync = '0') THEN   --check for start bit 
-                busy1 <= '1';
+   
+    counter_receive_process:PROCESS(clk)
+    BEGIN
+        IF (clk = '1' and clk'EVENT) THEN
+            IF (receiving = '0' OR reset_l = '0') THEN
+                count1 <= (OTHERS => '0') ;
+            ELSIF (receiving = '1') THEN
+                count1 <= count1 + 1 ;
+            END IF ;
+        END IF ;
+    END PROCESS counter_receive_process ;
+    
+    counter_trasmit_process:PROCESS(clk)
+    BEGIN
+        IF (clk = '1' and clk'EVENT) THEN
+            IF (transmitting = '0' OR reset_l = '0') THEN
+                count2 <= (OTHERS => '0') ;
+            ELSE
+                IF(transmitting = '1') THEN
+                    count2 <= count2 + 1 ;
+                END IF ;
+            END IF ;
+        END IF ;
+    END PROCESS counter_trasmit_process ;
+    
+    serial_sync:PROCESS(clk)
+    BEGIN
+        IF (clk'EVENT AND clk='1') THEN
+            IF (reset_l = '0')THEN
+                serial_in_temp <= '1';
+            ELSE
+                serial_in_temp <= serial_in; 
+                serial_in_sync <= serial_in_temp;
+            END IF ;
+        END IF ;
+    END PROCESS serial_sync ;
+    
+    
+    receive:PROCESS(clk)
+    BEGIN
+        IF (clk = '1' AND clk'EVENT) THEN
+            IF (serial_in_sync = '0') THEN -- check for start bit
+                receiving <= '1' ;
             END IF;
-            
-            IF (busy1 = '1') THEN 
-                counter1 <= counter1+1;
-            ELSE 
-                counter1 <= "000000000000";
-            END IF;
-                
-          IF counter1 = "000011010001" THEN  --at 209 
-                IF (serial_in_sync = '1') THEN --debounce, restart the counter 
-                    busy1 <= '0';
-                    counter1 <= "000000000000";
-                END IF;   
-          ELSIF counter1 = "001001110011" THEN   -- 209+418*1=627     --wait 418 after the start bit      
+           
+            IF (count1 = 209 AND serial_in_sync = '0') THEN --check if start bit still valid in middle
+                rx_data_in_progress <= '1' ;
+            ELSIF(count1 = 209 AND serial_in_sync = '1') THEN
+                receiving <= '0' ;
+            ELSIF(count1 = 627 AND rx_data_in_progress = '1') THEN
                 rx_data(0) <= serial_in_sync ;
-          ELSIF counter1 = "010000010101" THEN   --209+418*2
+            
+            ELSIF(count1 = 1045 AND rx_data_in_progress = '1') THEN
                 rx_data(1) <= serial_in_sync ;
-          ELSIF counter1 = "010110110111" THEN   --209+418*3
+            
+            ELSIF(count1 = 1463 AND rx_data_in_progress = '1') THEN
                 rx_data(2) <= serial_in_sync ;
-          ELSIF counter1 = "011101011001" THEN   --209+418*4
+            
+            ELSIF(count1 = 1881 AND rx_data_in_progress = '1') THEN
                 rx_data(3) <= serial_in_sync ;
-          ELSIF counter1 = "100011111011" THEN   --209+418 *5
+    
+            ELSIF(count1 = 2299 AND rx_data_in_progress = '1') THEN
                 rx_data(4) <= serial_in_sync ;
-          ELSIF counter1 = "101010011101" THEN   --209+418 *6
+            
+            ELSIF(count1 = 2717 AND rx_data_in_progress = '1') THEN
                 rx_data(5) <= serial_in_sync ;
-          ELSIF counter1 = "110000111111" THEN   --209+418 *7
+            
+            ELSIF(count1 = 3135 AND rx_data_in_progress = '1') THEN
                 rx_data(6) <= serial_in_sync ;
-          ELSIF counter1 = "110111100001" THEN   --209+418 *8
+            
+            ELSIF(count1 = 3553 AND rx_data_in_progress = '1') THEN
                 rx_data(7) <= serial_in_sync ;
                 rx_data_valid <= '1' ;
-          ELSIF counter1 = "110111100010" THEN   --209+418 *8
-                rx_data(7) <= serial_in_sync ;
-                rx_data_valid <= '0' ;   
-          ELSIF counter1 = "111010110010" THEN   --418 *9 stop bit
-                busy1 <= '0';
+          
+            ELSIF(count1 = 3554 AND rx_data_in_progress = '1') THEN
+                rx_data_valid <= '0' ;
+            
+            ELSIF(count1 = 3971 AND rx_data_in_progress = '1' AND serial_in_sync = '1') THEN -- check stop bit
+                rx_data_in_progress <= '0';
+                receiving <= '0' ;  
+            END IF ;
+        END IF ;
+    END PROCESS receive ;
                 
-          END IF;
-      END IF;
-    END IF;
-     
-   END PROCESS receiver_process ;
-   -----------------------------------------------------------------------------------------------
-      transmitte_process:PROCESS(clk)
-   BEGIN
-      IF (clk = '1' AND clk'event) THEN
-        IF (reset_l ='0') THEN 
-            busy2 <= '0';
-            tx_busy <= '0' ;
-            serial_out <= '1';
-            counter2 <= (OTHERS => '0');
-        ELSE   
-            
-            IF (tx_start = '1') THEN --when tx_start is asserted , save tx_Data in reg
-                tx_data_reg <= tx_data;
-				tx_busy <= '1';
-                busy2 <= '1';
-            END IF; 
-            
-            IF (busy2 = '1') THEN    --
-                counter2 <= counter2 +1;
-            ELSE
-                counter2 <= "000000000000";
-            END IF;      
-			
-            IF counter2 = "000000000001" THEN  --0 start bit
-					serial_out <= '0'; 
-            ELSIF counter2 = "000110100010" THEN   -- 418*1     --wait 418 after the start bit      
-					serial_out <= tx_data_reg(0);
-              ELSIF counter2 = "001101000100" THEN   --418*2
-                    serial_out <= tx_data_reg(1);
-              ELSIF counter2 = "010011100110" THEN   --418*3
-                    serial_out <= tx_data_reg(2);
-              ELSIF counter2 = "011010001000" THEN   --418*4
-                    serial_out <= tx_data_reg(3);
-              ELSIF counter2 = "100000101010" THEN   --418 *5
-                    serial_out <= tx_data_reg(4);
-              ELSIF counter2 = "100111001100" THEN   --418 *6
-                    serial_out <= tx_data_reg(5);
-              ELSIF counter2 = "101101101110" THEN   --418 *7
-                    serial_out <= tx_data_reg(6);
-              ELSIF counter2 = "110100010000" THEN   --418 *8
-                    serial_out <= tx_data_reg(7);
-                    
-               ELSIF counter2 = "111010110010" THEN   --418 *9
-                    serial_out <= '1'; --stop bit
-                    tx_busy <= '0';
-                    busy2 <= '0';
-             END IF;
-         END IF;
-      END IF;
 
-   END PROCESS transmitte_process ;
+    transmit:PROCESS(clk)
+    BEGIN
+        IF (clk = '1' AND clk'EVENT) THEN
+            IF(reset_l = '0') THEN
+                serial_out <= '1' ;
+            ELSIF (tx_start = '1') THEN
+                transmitting <= '1' ;
+                serial_out <= '0' ; -- output start bit
+                --tx_busy <= '0' ;
+                tx_data_save <= tx_data; 
+                tx_busy <= '1' ;
+            ELSE
+                IF(count2 = 418 AND tx_busy = '1') THEN
+                    serial_out <= tx_data_save(0) ;
+                
+                ELSIF(count2 = 836 AND tx_busy = '1') THEN
+                    serial_out <= tx_data_save(1) ;
+                
+                ELSIF(count2 = 1254 AND tx_busy = '1') THEN
+                    serial_out <= tx_data_save(2) ;
+                
+                ELSIF(count2 = 1672 AND tx_busy = '1') THEN
+                    serial_out <= tx_data_save(3) ;
+                
+                ELSIF(count2 = 2090 AND tx_busy = '1') THEN
+                    serial_out <= tx_data_save(4) ;
+    
+                ELSIF(count2 = 2508 AND tx_busy = '1') THEN
+                    serial_out <= tx_data_save(5) ;
+                
+                ELSIF(count2 = 2926 AND tx_busy = '1') THEN
+                    serial_out <= tx_data_save(6) ;
+                
+                ELSIF(count2 = 3344 AND tx_busy = '1') THEN
+                    serial_out <= tx_data_save(7) ;
+    
+                ELSIF(count2 = 3762 AND tx_busy = '1') THEN
+                    serial_out <= '1' ; --output stop bit
+                
+                ELSIF(count2 = 4180 AND tx_busy = '1') THEN
+                    transmitting <= '0' ;
+                    tx_busy <= '0' ;
+                    serial_out <= '1' ;
+                END IF ;
+            END IF ;
+        END IF ;
+    END PROCESS transmit ;           
+            
 end Behavioral;

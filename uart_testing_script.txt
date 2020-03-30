@@ -1,0 +1,19 @@
+ORIGINAL
+add_force {/testbench/clk} -radix hex {1 0ns} {0 10416ps} -repeat_every 20833ps
+add_force {/testbench/reset_h} -radix hex {1 0ns}
+run 1000 ns
+add_force {/testbench/reset_h} -radix hex {0 0ns}
+run 200 ns
+run 4000 ns
+NOTE: one character is 8708.3 ns given 48 MHz clock
+EDITS: 
+initialized tx_busy low
+changed tx_busy write to data bus to be oe
+
+
+NEW
+add_force {/testbench/clk} -radix hex {1 0ns} {0 10416ps} -repeat_every 20833ps
+add_force {/testbench/reset_h} -radix hex {1 0ns}
+run 100 ns
+add_force {/testbench/reset_h} -radix hex {0 0ns}
+run 87.083 us

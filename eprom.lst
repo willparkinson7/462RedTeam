@@ -1,111 +1,149 @@
 (SRCTools Version 3.1.1)
  HexLoc     DecLoc    MachWord   Label        Instruction                Comment
-00000000  0000000000  2e400068                la r25, QMC                ;
-00000004  0000000004  2d800058                la r22, BOT                ;
-00000008  0000000008  2e000138                la r24, RC                 ;
-0000000c  0000000012  2d40017c                la r21, RCT                ;
-00000010  0000000016  2d00011c                la r20, DL                 ;
-00000014  0000000020  2d800154                la r22, RA                 ;	READ ADDRESS, uses r3 for counter, r4 length, r5 address
-00000018  0000000024  2fc0002c                la r31, TOP                ;
+00000000  0000000000  2e40005c                la r25, QMC                ;
+00000004  0000000004  2d80004c                la r22, BOT                ;
+00000008  0000000008  2d40011c                la r21, RAS                ; READ ADDRESS/LENGTH START
+0000000c  0000000012  2d000110                la r20, DL                 ;
+00000010  0000000016  2e000160                la r24, PC                 ;
+00000014  0000000020  2d800124                la r22, RL                 ;	READ ADDRESS/LENGTH, uses r3 for counter, r4 length, r5 address
+00000018  0000000024  2fc00030                la r31, TOP                ;
 0000001c  0000000028  2f81ffe0                la r30, -32                ;	TX_BUSY_FLAG
 00000020  0000000032  2f41ffe4                la r29, -28                ;	TX_DATA
 00000024  0000000036  2f01ffe8                la r28, -24                ;	RX_DATA_FLAG
 00000028  0000000040  2ec1ffec                la r27, -20                ;	RX_DATA
+0000002c  0000000044  2dc01000                la r23, 4096               ;	SRAM
                                                                          
-0000002c  0000000044  08780000  TOP:          ld r1, 0(r28)              ;	put rx_data_flag into r1
-00000030  0000000048  403e1002                brzr r31, r1               ;  branch to top if r1 is zero
-00000034  0000000052  08760000                ld r1, 0(r27)              ;		put rx_data into r1
-00000038  0000000056  6883ffc1                addi r2, r1, -63           ; 	put ? ascii check into r2
-0000003c  0000000060  40322002                brzr r25, r2               ;		go to ? assembly if difference is zero
-00000040  0000000064  68c3ff90                addi r3, r1, -112          ;	put p ascii into r3
-00000044  0000000068  40343002                brzr r26, r3               ;		go to p assembly if equal to rx_data
-00000048  0000000072  6903ff8e                addi r4, r1, -114          ;	put r ascii into r4
-0000004c  0000000076  40304002                brzr r24, r4               ;		go to r assembly if equal to rx_data
-00000050  0000000080  6943ff89                addi r5, r1, -119          ;	put w ascii into r5
-00000054  0000000084  402e5002                brzr r23, r5               ;		go to w assembly if equal to rx_data
-00000058  0000000088  08bc0000  BOT:          ld r2, 0(r30)              ;		
-0000005c  0000000092  402c2003                brnz r22, r2               ;
-00000060  0000000096  187a0000                st r1, 0(r29)              ;		spit letter back out
-00000064  0000000100  403e0001                br r31                     ;		go to top and get new rx_data
-00000068  0000000104  087c0000  QMC:          ld r1, 0(r30)              ;		r25
-0000006c  0000000108  40321003                brnz r25, r1               ;		wait until tx_busy_flag is low
-00000070  0000000112  68800052                addi r2, r0, 82            ;	R	
+00000030  0000000048  08780000  TOP:          ld r1, 0(r28)              ;	put rx_data_flag into r1
+00000034  0000000052  403e1002                brzr r31, r1               ;  branch to top if r1 is zero
+00000038  0000000056  08760000                ld r1, 0(r27)              ;		put rx_data into r1
+0000003c  0000000060  6883ffc1                addi r2, r1, -63           ; 	put ? ascii check into r2
+00000040  0000000064  40322002                brzr r25, r2               ;		go to ? assembly if difference is zero
+00000044  0000000068  68c3ff90                addi r3, r1, -112          ;	put p ascii into r3
+00000048  0000000072  402a3002                brzr r21, r3               ;		go to p assembly if equal to rx_data
+                                                                         ;	addi r4, r1, -114 ;	put r ascii into r4
+                                                                         ;	brzr r24, r4 ;		go to r assembly if equal to rx_data
+                                                                         ;	addi r5, r1, -119 ;	put w ascii into r5
+                                                                         ;	brzr r23, r5 ;		go to w assembly if equal to rx_data
+0000004c  0000000076  08bc0000  BOT:          ld r2, 0(r30)              ;
+00000050  0000000080  402c2003                brnz r22, r2               ;
+00000054  0000000084  187a0000                st r1, 0(r29)              ;		spit letter back out
+00000058  0000000088  403e0001                br r31                     ;		go to top and get new rx_data
+0000005c  0000000092  087c0000  QMC:          ld r1, 0(r30)              ;		r25
+00000060  0000000096  40321003                brnz r25, r1               ;		wait until tx_busy_flag is low
+00000064  0000000100  68800052                addi r2, r0, 82            ;	R
+00000068  0000000104  4be80001                brl r15, r20               ;
+0000006c  0000000108  18ba0000                st r2, (r29)               ;		write to tx_data
+00000070  0000000112  68800049                addi r2, r0, 73            ;	I
 00000074  0000000116  4be80001                brl r15, r20               ;
 00000078  0000000120  18ba0000                st r2, (r29)               ;		write to tx_data
-0000007c  0000000124  68800049                addi r2, r0, 73            ;	I
+0000007c  0000000124  68800043                addi r2, r0, 67            ;	C
 00000080  0000000128  4be80001                brl r15, r20               ;
 00000084  0000000132  18ba0000                st r2, (r29)               ;		write to tx_data
-00000088  0000000136  68800043                addi r2, r0, 67            ;	C
+00000088  0000000136  68800048                addi r2, r0, 72            ;	H
 0000008c  0000000140  4be80001                brl r15, r20               ;
 00000090  0000000144  18ba0000                st r2, (r29)               ;		write to tx_data
-00000094  0000000148  68800048                addi r2, r0, 72            ;	H
+00000094  0000000148  68800041                addi r2, r0, 65            ;	A
 00000098  0000000152  4be80001                brl r15, r20               ;
 0000009c  0000000156  18ba0000                st r2, (r29)               ;		write to tx_data
-000000a0  0000000160  68800041                addi r2, r0, 65            ;	A
+000000a0  0000000160  68800052                addi r2, r0, 82            ;	R
 000000a4  0000000164  4be80001                brl r15, r20               ;
 000000a8  0000000168  18ba0000                st r2, (r29)               ;		write to tx_data
-000000ac  0000000172  68800052                addi r2, r0, 82            ;	R
+000000ac  0000000172  68800044                addi r2, r0, 68            ;	D
 000000b0  0000000176  4be80001                brl r15, r20               ;
 000000b4  0000000180  18ba0000                st r2, (r29)               ;		write to tx_data
-000000b8  0000000184  68800044                addi r2, r0, 68            ;	D
+000000b8  0000000184  68800055                addi r2, r0, 85            ;	U
 000000bc  0000000188  4be80001                brl r15, r20               ;
 000000c0  0000000192  18ba0000                st r2, (r29)               ;		write to tx_data
-000000c4  0000000196  68800055                addi r2, r0, 85            ;	U
+000000c4  0000000196  68800049                addi r2, r0, 73            ;	I
 000000c8  0000000200  4be80001                brl r15, r20               ;
 000000cc  0000000204  18ba0000                st r2, (r29)               ;		write to tx_data
-000000d0  0000000208  68800049                addi r2, r0, 73            ;	I
+000000d0  0000000208  6880004e                addi r2, r0, 78            ;	N
 000000d4  0000000212  4be80001                brl r15, r20               ;
 000000d8  0000000216  18ba0000                st r2, (r29)               ;		write to tx_data
-000000dc  0000000220  6880004e                addi r2, r0, 78            ;	N
+000000dc  0000000220  6880004f                addi r2, r0, 79            ;	O
 000000e0  0000000224  4be80001                brl r15, r20               ;
 000000e4  0000000228  18ba0000                st r2, (r29)               ;		write to tx_data
-000000e8  0000000232  6880004f                addi r2, r0, 79            ;	O
+000000e8  0000000232  68800020                addi r2, r0, 32            ;	_
 000000ec  0000000236  4be80001                brl r15, r20               ;
 000000f0  0000000240  18ba0000                st r2, (r29)               ;		write to tx_data
-000000f4  0000000244  68800020                addi r2, r0, 32            ;	_
+000000f4  0000000244  68800056                addi r2, r0, 86            ;	V
 000000f8  0000000248  4be80001                brl r15, r20               ;
 000000fc  0000000252  18ba0000                st r2, (r29)               ;		write to tx_data
-00000100  0000000256  68800056                addi r2, r0, 86            ;	V
+00000100  0000000256  68800032                addi r2, r0, 50            ;	2
 00000104  0000000260  4be80001                brl r15, r20               ;
 00000108  0000000264  18ba0000                st r2, (r29)               ;		write to tx_data
-0000010c  0000000268  68800032                addi r2, r0, 50            ;	2
-00000110  0000000272  4be80001                brl r15, r20               ;
-00000114  0000000276  18ba0000                st r2, (r29)               ;		write to tx_data
-00000118  0000000280  403e0001                br r31                     ;
-0000011c  0000000284  694003e8  DL:           addi r5, r0, 1000          ;		r6 holds count to delay, r5 holds counter, r4 for comparison, r15 for pc
-00000120  0000000288  6ce80008                addi r19, r20, 8           ;
-00000124  0000000292  087c0000                ld r1, 0(r30)              ;			wait until tx_busy_flag is low
-00000128  0000000296  694bffff                addi r5, r5, -1            ;
-0000012c  0000000300  40265003                brnz r19, r5               ;	
-00000130  0000000304  40261003                brnz r19, r1               ;
-00000134  0000000308  401e0001                br r15                     ;
-00000138  0000000312  08780000  RC:           ld r1, 0(r28)              ;	put rx_data_flag into r1		
-0000013c  0000000316  40301002                brzr r24, r1               ;  branch to RC if r1 is zero
-00000140  0000000320  08760000                ld r1, 0(r27)              ;		put rx_data into r1
-00000144  0000000324  6883ffe0                addi r2, r1, -32           ; 	put _ ascii check into r2
-00000148  0000000328  403e2003                brnz r31, r2               ;		exit if not _
-0000014c  0000000332  08c00000                ld r3, (r0)                ;		put zero into r3 (counter)
-00000150  0000000336  09400000                ld r5, (r0)                ;		zero out address
-00000154  0000000340  08780000  RA:           ld r1, 0(r28)              ;
-00000158  0000000344  402c1002                brzr r22, r1               ;  	branch to RA if r1 is zero
-0000015c  0000000348  08760000                ld r1, 0(r27)              ;		put rx_data into r1
-00000160  0000000352  e14a0008                shl r5, r5, 8              ;
-00000164  0000000356  b14a1000                or r5, r5, r1              ;
-00000168  0000000360  68c60001                addi r3, r3, 1             ;
-0000016c  0000000364  6907fffc                addi r4, r3, -4            ;	r4 negative if 
-00000170  0000000368  402c4005                brmi r22, r4               ; 
-00000174  0000000372  18fa0000                st r3, (r29)               ;
-00000178  0000000376  088a0000                ld r2, 0(r5)               ;		load from memory
-0000017c  0000000380  087c0000  RCT:          ld r1, 0(r30)              ;		r25
-00000180  0000000384  402a1003                brnz r21, r1               ;		wait until tx_busy_flag is low
-00000184  0000000388  18ba0000                st r2, (r29)               ;		store in tx_data
-00000188  0000000392  403e0001                br r31                     ;
+0000010c  0000000268  403e0001                br r31                     ;
+00000110  0000000272  087c0000  DL:           ld r1, 0(r30)              ;			wait until tx_busy_flag is low
+00000114  0000000276  40281003                brnz r20, r1               ;
+00000118  0000000280  401e0001                br r15                     ;
+0000011c  0000000284  28c00000  RAS:          la r3, 0                   ;		put zero into r3 (counter)
+00000120  0000000288  29400000                la r5, 0                   ;		zero out address
+                                                                         ;	addi r2, r0, 65 ;	A
+                                                                         ;	brl r15, r20 ;
+                                                                         ;	st r2, (r29) ;		write to tx_data
+                                                                         ;	addi r2, r0, 58 ;	:
+                                                                         ;	brl r15, r20 ;
+                                                                         ;	st r2, (r29) ;		write to tx_data
+00000124  0000000292  08780000  RL:           ld r1, 0(r28)              ;	check if rx_data has anything
+00000128  0000000296  402c1002                brzr r22, r1               ;  	branch to RA if r1 is zero
+0000012c  0000000300  08760000                ld r1, 0(r27)              ;		put rx_data into r1
+00000130  0000000304  187a0000                st r1, 0(r29)              ;		output rx_data (just to be sure)
+00000134  0000000308  e14a0008                shl r5, r5, 8              ;
+00000138  0000000312  b14a1000                or r5, r5, r1              ;
+0000013c  0000000316  68c60001                addi r3, r3, 1             ;
+00000140  0000000320  6907fffc                addi r4, r3, -4            ;	r4 negative if
+00000144  0000000324  402c4005                brmi r22, r4               ;
+                                                                         
+                                                                         ;	addi r2, r0, 68 ;	D
+                                                                         ;	brl r15, r20 ;
+                                                                         ;	st r2, (r29) ;		write to tx_data
+                                                                         ;	addi r2, r0, 79 ;	O
+                                                                         ;	brl r15, r20 ;
+                                                                         ;	st r2, (r29) ;		write to tx_data
+                                                                         ;	addi r2, r0, 78 ;	N
+                                                                         ;	brl r15, r20 ;
+                                                                         ;	st r2, (r29) ;		write to tx_data
+                                                                         ;	addi r2, r0, 69 ;	E
+                                                                         ;	brl r15, r20 ;
+                                                                         ;	st r2, (r29) ;		write to tx_data
+00000148  0000000328  401e0001                br r15                     ;			branch to program counter (P, as of right now)
+0000014c  0000000332  2dc01000  PCS:          la r23, 4096               ;	SRAM
+00000150  0000000336  4bea0001                brl r15, r21               ;		read length into r5
+00000154  0000000340  28c00000                la r3, 0                   ;			r2 is big counter
+00000158  0000000344  79805000                neg r6, r5                 ;		r6 is comparison
+0000015c  0000000348  698dffff                addi r6, r6, -1            ; 	compensate for brmi not counting zero
+00000160  0000000352  08780000  PC:           ld r1, 0(r28)              ;	check if rx_data has anything
+00000164  0000000356  402c1002                brzr r22, r1               ;  	branch to RA if r1 is zero
+00000168  0000000360  08760000                ld r1, 0(r27)              ;		put rx_data into r1
+0000016c  0000000364  187a0000                st r1, 0(r29)              ;		output rx_data (just to be sure)
+00000170  0000000368  6dee0008                addi r23, r23, 8           ;
+00000174  0000000372  186e0000                st r1, (r23)               ;
+00000178  0000000376  68c60001                addi r3, r3, 1             ;	one byte
+0000017c  0000000380  61066000                add r4, r3, r6             ;	r4 negative if
+00000180  0000000384  40304005                brmi r24, r4               ;
+00000184  0000000388  68800045                addi r2, r0, 69            ;	E
+00000188  0000000392  4be80001                brl r15, r20               ;
+0000018c  0000000396  18ba0000                st r2, (r29)               ;		write to tx_data
+00000190  0000000400  68800058                addi r2, r0, 88            ;	X
+00000194  0000000404  4be80001                brl r15, r20               ;
+00000198  0000000408  18ba0000                st r2, (r29)               ;		write to tx_data
+0000019c  0000000412  68800049                addi r2, r0, 73            ;	I
+000001a0  0000000416  4be80001                brl r15, r20               ;
+000001a4  0000000420  18ba0000                st r2, (r29)               ;		write to tx_data
+000001a8  0000000424  68800054                addi r2, r0, 84            ;	T
+000001ac  0000000428  4be80001                brl r15, r20               ;
+000001b0  0000000432  18ba0000                st r2, (r29)               ;		write to tx_data
+000001b4  0000000436  68800050                addi r2, r0, 80            ;	P
+000001b8  0000000440  4be80001                brl r15, r20               ;
+000001bc  0000000444  18ba0000                st r2, (r29)               ;		write to tx_data
+000001c0  0000000448  403e0001                br r31                     ;
 
 --- Symbol Table ---
-DL: 284
-QMC: 104
-TOP: 44
-RCT: 380
-BOT: 88
-RC: 312
-RA: 340
+PC: 352
+RAS: 284
+DL: 272
+QMC: 92
+PCS: 332
+TOP: 48
+BOT: 76
+RL: 292

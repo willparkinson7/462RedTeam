@@ -1,6 +1,6 @@
 	la r25, QMC ;
 	la r22, BOT ;
-	la r26, PC ;
+	la r26, PC ;	Goes into SRAM at 100...000
 	la r24, RC ;
 	la r21, RCT ;
 	la r20, DL ;
@@ -79,13 +79,15 @@ DL:	addi r5, r0, 1000 ;		r6 holds count to delay, r5 holds counter, r4 for compa
 	brnz r19, r5 ;	
 	brnz r19, r1 ;			loop if busy
 	br r15 ;
+PC:	
+	br r31 ;
 RC:	ld r1, 0(r28) ;		put rx_data_flag into r1		
 	brzr r24, r1 ;  	branch to RC if r1 is zero
 	ld r1, 0(r27) ;		put rx_data into r1
 	addi r2, r1, -32 ; 	put _ ascii check into r2
 	brnz r31, r2 ;		exit if not _
-	ld r3, (r0) ;		put zero into r3 (counter)
-	ld r5, (r0) ;		zero out address
+	la r3, 0 ;		put zero into r3 (counter)
+	la r5, 0 ;		zero out address
 RA:	ld r1, 0(r28) ;
 	brzr r22, r1 ;  	branch to RA if r1 is zero
 	ld r1, 0(r27) ;		put rx_data into r1
@@ -94,7 +96,6 @@ RA:	ld r1, 0(r28) ;
 	addi r3, r3, 1 ;
 	addi r4, r3, -4 ;	r4 negative if 
 	brmi r22, r4 ; 
-	st r3, (r29) ;
 	ld r2, 0(r5) ;		load from memory
 RCT:	ld r1, 0(r30) ;		r25
 	brnz r21, r1 ;		wait until tx_busy_flag is low
